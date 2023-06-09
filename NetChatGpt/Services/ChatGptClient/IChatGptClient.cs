@@ -10,5 +10,7 @@ namespace NetChatGptCLient.Services.ChatGptClient
     public interface IChatGptClient
     {
         IChatGptOptions Options { get; }
+
+        IChatGptConversation StartNewConversation(string systemMessage);
     }
 }

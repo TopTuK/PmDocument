@@ -12,7 +12,6 @@ namespace NetChatGptCLient.Models.ChatGpt
     /// <remarks>
     /// See <see href="https://platform.openai.com/docs/models/overview">Models overview</see> for more information.
     /// </remarks>
-    /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
     public static class OpenAIChatGptModels
     {
         /// <summary>
