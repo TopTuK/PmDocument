@@ -1,0 +1,3 @@
+https://ui.vuestic.dev/ru/introduction/overview
+https://v2.tailwindcss.com/docs/guides/vue-3-vite
+https://pinia.vuejs.org/getting-started.html
