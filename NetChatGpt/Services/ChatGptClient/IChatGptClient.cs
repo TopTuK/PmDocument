@@ -12,5 +12,7 @@ namespace NetChatGptCLient.Services.ChatGptClient
         IChatGptOptions Options { get; }
 
         IChatGptConversation StartNewConversation(string systemMessage);
+        Task AskAsync(IChatGptConversation conversation, string message);
+        Task AskAsync(Guid conversationId, string message);
     }
 }

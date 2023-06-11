@@ -8,6 +8,10 @@ namespace NetChatGptCLient.Models.ChatGpt
 {
     public interface IChatGptOptions
     {
+        string ApiUrl {
+            get => @"https://api.openai.com/"; 
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -26,7 +30,7 @@ namespace NetChatGptCLient.Models.ChatGpt
         /// It is generally recommend altering this value or <see cref="TopP"/> but not both.
         /// </remarks>
         /// <seealso cref="TopP"/>
-        public double Temperature { get; set; }
+        double Temperature { get; set; }
 
         /// <summary>
         /// Gets or sets an alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with <see cref="TopP"/> probability mass.
@@ -36,13 +40,13 @@ namespace NetChatGptCLient.Models.ChatGpt
         /// It is generally recommend altering this value or <see cref="Temperature"/> but not both.
         /// </remarks>
         /// <seealso cref="Temperature"/>
-        public double TopP { get; set; }
+        double TopP { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum number of tokens to generate in the chat completion.
         /// The total length of input tokens and generated tokens is limited by the model's context length.
         /// </summary>
-        public int? MaxTokens { get; set; }
+        int MaxTokens { get; set; }
 
         /// <summary>
         /// Gets or sets the presence penalties for chat completion. Number between -2.0 and 2.0.
@@ -51,7 +55,7 @@ namespace NetChatGptCLient.Models.ChatGpt
         /// <remarks>
         /// See <see href="https://platform.openai.com/docs/api-reference/parameter-details">Parameter details</see> for more information.
         /// </remarks>
-        public double? PresencePenalty { get; set; }
+        double PresencePenalty { get; set; }
 
         /// <summary>
         /// Gets or sets the frequency penalties for chat completion. Number between -2.0 and 2.0.
@@ -60,6 +64,6 @@ namespace NetChatGptCLient.Models.ChatGpt
         /// <remarks>
         /// See <see href="https://platform.openai.com/docs/api-reference/parameter-details">Parameter details</see> for more information.
         /// </remarks>
-        public double? FrequencyPenalty { get; set; }
+        double FrequencyPenalty { get; set; }
     }
 }

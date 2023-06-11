@@ -9,5 +9,6 @@ namespace NetChatGptCLient.Models.ChatGpt
     public interface IChatGptConversation
     {
         Guid ConversationId { get; }
+        IReadOnlyList<IChatGptMessage> Messages { get; }
     }
 }
