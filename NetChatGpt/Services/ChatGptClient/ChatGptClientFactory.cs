@@ -1,4 +1,5 @@
 ﻿using NetChatGptCLient.Models.ChatGpt;
+using NetChatGptCLient.Models.ChatGpt.Cache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +29,15 @@ namespace NetChatGptCLient.Services.ChatGptClient
         public static IChatGptClient CreateDefaultClient(string apiSecret)
         {
             var options = new ChatGptClientOptions(apiSecret);
+            var cache = new DefaultConversationCache();
 
-            return new ChatGptClientImpl(options);
+            return new ChatGptClientImpl(options, cache);
+        }
+
+        public static IChatGptClient CreateClient(string apiSecret, IChatGptConversationCache cache)
+        {
+            var options = new ChatGptClientOptions(apiSecret);
+            return new ChatGptClientImpl(options, cache);
         }
     }
 }

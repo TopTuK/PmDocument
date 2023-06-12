@@ -27,7 +27,7 @@ namespace NetChatGptCLient.Models.ChatGpt
         /// <summary>
         /// Gets or sets the Conversation Id, that is used to group messages of the same conversation.
         /// </summary>
-        public Guid ConversationId { get; set; }
+        public Guid ConversationId { get; set; } = Guid.Empty;
 
         /// <summary>
         /// Gets or sets the UTC date and time at which the response has been generated.
@@ -44,7 +44,7 @@ namespace NetChatGptCLient.Models.ChatGpt
         /// <summary>
         /// Gets or sets the error occurred during the chat completion execution, if any.
         /// </summary>
-        public ChatGptError? Error { get; set; }
+        public ChatGptError? Error { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the list of choices that has been provided by chat completion.

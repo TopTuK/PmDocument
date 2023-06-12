@@ -21,13 +21,13 @@ namespace NetChatGptCLient.Models.ChatGpt.ResponseDTO
         /// Gets or sets the message associated with this <see cref="ChatGptChoice"/>.
         /// </summary>
         /// <seealso cref="ChatGptChoice"/>
-        public IChatGptMessage Message { get; set; }
+        public ChatGptMessage Message { get; set; } = new();
 
         /// <summary>
         /// When using streaming responses, gets or sets the partial message delta associated with this <see cref="ChatGptChoice"/>.
         /// </summary>
         /// <see cref="ChatGptRequest.Stream"/>
-        public IChatGptMessage? Delta { get; set; }
+        public IChatGptMessage? Delta { get; set; } = null;
 
         /// <summary>
         /// Gets or sets a value specifying why the choice has been returned.

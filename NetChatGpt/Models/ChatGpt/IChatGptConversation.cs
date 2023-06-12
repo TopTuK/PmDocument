@@ -10,5 +10,7 @@ namespace NetChatGptCLient.Models.ChatGpt
     {
         Guid ConversationId { get; }
         IReadOnlyList<IChatGptMessage> Messages { get; }
+
+        IChatGptMessage AddMessage(string role, string content);
     }
 }

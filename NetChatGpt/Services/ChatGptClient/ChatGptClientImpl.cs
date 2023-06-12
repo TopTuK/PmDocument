@@ -2,8 +2,10 @@
 using NetChatGptCLient.Models.ChatGpt.ResponseDTO;
 using NetChatGptCLient.Models.HttpClient;
 using NetChatGptCLient.Services.HttpClient;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,24 +17,18 @@ namespace NetChatGptCLient.Services.ChatGptClient
     {
         private const string API_ACTION = "v1/chat/completions";
 
-        private class ChatGptMessage : IChatGptMessage
-        {
-            public string Role { get; set; } = string.Empty;
-            public string Content { get; set; } = string.Empty;
-        }
-
         private class ChatGptConversation : IChatGptConversation
         {
-            private readonly List<IChatGptMessage> _messages = new();
+            private readonly ConcurrentQueue<IChatGptMessage> _queue = new();
 
             public Guid ConversationId { get; } = Guid.NewGuid();
-            public IReadOnlyList<IChatGptMessage> Messages => _messages;
+            public IReadOnlyList<IChatGptMessage> Messages => _queue.ToList();
 
             public IChatGptMessage AddMessage(string role, string content)
             {
                 var message = new ChatGptMessage {  Role = role, Content = content };
 
-                _messages.Add(message);
+                _queue.Enqueue(message);
 
                 return message;
             }
@@ -41,29 +37,31 @@ namespace NetChatGptCLient.Services.ChatGptClient
         private readonly IHttpClient _httpClient;
         private readonly IChatGptOptions _options;
 
-        private readonly Dictionary<Guid, ChatGptConversation> _conversations = new();
-
         public IChatGptOptions Options => _options;
 
-        public ChatGptClientImpl(IChatGptOptions options)
+        public IChatGptConversationCache ConversationCache { get; init; }
+
+        public ChatGptClientImpl(IChatGptOptions options, IChatGptConversationCache cache)
         {
             _options = options;
             _httpClient = HttpClientFactory.CreateHttpClient(options.ApiUrl, options.ApiSecret);
+
+            ConversationCache = cache;
         }
 
-        public IChatGptConversation StartNewConversation(string systemMessage)
+        public async Task<IChatGptConversation> StartNewConversation(string systemMessage)
         {
             var conversetation = new ChatGptConversation();
             conversetation.AddMessage(ChatGptRoles.SystemRole, systemMessage);
 
-            _conversations.Add(conversetation.ConversationId, conversetation);
+            await ConversationCache.AddAsync(conversetation);
 
             return conversetation;
         }
 
-        public async Task AskAsync(IChatGptConversation conversation, string message)
+        public async Task<string> AskAsync(IChatGptConversation conversation, string message)
         {
-            await AskAsync(conversation.ConversationId, message);
+            return await AskAsync(conversation.ConversationId, message);
         }
 
         private class ChatGptRequest : IChatGptRequest
@@ -79,7 +77,8 @@ namespace NetChatGptCLient.Services.ChatGptClient
             public bool stream => false;
         }
 
-        private IChatGptRequest CreateRequest(IReadOnlyList<IChatGptMessage> messages) => new ChatGptRequest
+        private IChatGptRequest CreateRequest(IReadOnlyList<IChatGptMessage> messages) 
+            => new ChatGptRequest
         {
             model = _options.Model,
             temperature = _options.Temperature,
@@ -90,14 +89,20 @@ namespace NetChatGptCLient.Services.ChatGptClient
             messages = messages,
         };
 
-        public async Task AskAsync(Guid conversationId, string message)
+        private static bool EnsureErrorIsNotSet(ChatGptResponse response)
         {
-            if(!_conversations.ContainsKey(conversationId)) 
+            return response.Error == null;
+        }
+
+        public async Task<string> AskAsync(Guid conversationId, string message)
+        {
+            var converastion = await ConversationCache.GetAsync(conversationId);
+
+            if (converastion == null)
             {
-                throw new ChatGptClientException();
+                throw new ChatGptClientException("IChatGptClient::Exception: can't find conversation");
             }
 
-            var converastion = _conversations[conversationId]!;
             converastion.AddMessage(ChatGptRoles.UserRole, message);
 
             var request = CreateRequest(converastion.Messages);
@@ -107,27 +112,47 @@ namespace NetChatGptCLient.Services.ChatGptClient
                 var response = await _httpClient.PostJsonAsync(API_ACTION, request);
 
                 if ((response != null) && (response.Content != null))
-                {
-                    var content = JObject.Parse(response.Content);
-                    
+                {   
                     if (response.IsSuccess)
                     {
                         // Parse ChatGptResponse
+                        var chatGptResponse = JsonConvert
+                            .DeserializeObject<ChatGptResponse>(response.Content);
+
                         // Ensure Error is null or empty
+                        if ((chatGptResponse != null) && (EnsureErrorIsNotSet(chatGptResponse)))
+                        {
+                            var assistantMessage = chatGptResponse.GetMessage();
+
+                            if (assistantMessage != null)
+                            {
+                                // Add message to conversation
+                                converastion.AddMessage(ChatGptRoles.AssistantRole, assistantMessage);
+                                return assistantMessage;
+                            }
+                            else
+                            {
+                                throw new ChatGptClientException("IChatGptClient::Exception: assistant message is empty");
+                            }
+                        }
+                        else
+                        {
+                            throw new ChatGptClientException("IChatGptClient::Exception: Chat GPT response has error");
+                        }
                     }
                     else
                     {
-                        // Ensure Error is set
+                        throw new ChatGptClientException("IChatGptClient::Exception: HTTP response is not success");
                     }
                 }
                 else
                 {
-                    throw new ChatGptClientException("");
+                    throw new ChatGptClientException("IChatGptClient::Exception: HTTP response error");
                 }
             }
             catch (Exception ex)
             {
-                throw new ChatGptClientException("", ex);
+                throw new ChatGptClientException("IChatGptClient::Exception: exception raised", ex);
             }
         }
     }

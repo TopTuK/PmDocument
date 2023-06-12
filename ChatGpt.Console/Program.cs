@@ -6,5 +6,28 @@ using System.Text.Json.Serialization;
 string apiKey = "";
 var chatGptClient = ChatGptClientFactory.CreateDefaultClient(apiKey);
 
-var conversation = chatGptClient.StartNewConversation("Answer me only wrong answers");
-await chatGptClient.AskAsync(conversation, "Calculate 2+2*2");
+string? promt = null;
+
+Console.Write("Enter assistant value: ");
+promt = Console.ReadLine();
+
+if ((promt == null) || (promt == string.Empty))
+{
+    return;
+}
+
+var conversation = await chatGptClient.StartNewConversation(promt);
+
+while(true)
+{
+    Console.Write("User: ");
+    promt = Console.ReadLine();
+
+    if (promt is not { Length: > 0})
+    {
+        break;
+    }
+
+    var message = await chatGptClient.AskAsync(conversation, promt);
+    Console.WriteLine($"Assistant (ChatGPT): {message}");
+}
