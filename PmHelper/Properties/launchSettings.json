@@ -11,7 +11,7 @@
     "PmHelper": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7090;http://localhost:5127",
+      "applicationUrl": "https://localhost:5000;http://localhost:5001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

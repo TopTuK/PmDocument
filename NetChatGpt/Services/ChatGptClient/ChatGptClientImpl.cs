@@ -74,10 +74,10 @@ namespace NetChatGptCLient.Services.ChatGptClient
             public double frequency_penalty { get; init; }
 
             public IReadOnlyList<IChatGptMessage> messages { get; init; } = new List<IChatGptMessage>();
-            public bool stream => false;
+            public bool stream { get; init; } = false;
         }
 
-        private IChatGptRequest CreateRequest(IReadOnlyList<IChatGptMessage> messages) 
+        private IChatGptRequest CreateRequest(IReadOnlyList<IChatGptMessage> messages, bool isStream = false) 
             => new ChatGptRequest
         {
             model = _options.Model,
@@ -87,6 +87,7 @@ namespace NetChatGptCLient.Services.ChatGptClient
             presence_penalty = _options.PresencePenalty,
             frequency_penalty = _options.FrequencyPenalty,
             messages = messages,
+            stream = isStream,
         };
 
         private static bool EnsureErrorIsNotSet(ChatGptResponse response)
@@ -154,6 +155,22 @@ namespace NetChatGptCLient.Services.ChatGptClient
             {
                 throw new ChatGptClientException("IChatGptClient::Exception: exception raised", ex);
             }
+        }
+
+        public async Task<string> AskStreamAsync(Guid conversationId, string message)
+        {
+            var converastion = await ConversationCache.GetAsync(conversationId);
+
+            if (converastion == null)
+            {
+                throw new ChatGptClientException("IChatGptClient::Exception: can't find conversation");
+            }
+
+            converastion.AddMessage(ChatGptRoles.UserRole, message);
+
+            var request = CreateRequest(converastion.Messages, true);
+
+            throw new NotImplementedException();
         }
     }
 }

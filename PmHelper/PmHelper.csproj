@@ -20,11 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.7" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
@@ -60,6 +58,7 @@
     <!-- Write the stamp file, so incremental builds work -->
     <!--<Touch Files="node_modules/.install-stamp" AlwaysCreate="true" />-->
 
-    <Exec Command="call runnpm.bat" WorkingDirectory=".\ClientApp\" Condition=" '$(Configuration)' == 'Debug' And '$(OS)' == 'Windows_NT' " />
+    <!-- Uncomment for development -->
+    <!--<Exec Command="call runnpm.bat" WorkingDirectory=".\ClientApp\" Condition=" '$(Configuration)' == 'Debug' And '$(OS)' == 'Windows_NT' " />-->
   </Target>
 </Project>
