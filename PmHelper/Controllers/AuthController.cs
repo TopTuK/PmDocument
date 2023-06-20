@@ -16,10 +16,17 @@ namespace PmHelper.Controllers
 
         }
 
+        [AllowAnonymous]
+        public IActionResult Index()
+        {
+            return Content("Hello there");
+        }
+
         [Authorize]
         public IActionResult Secure()
         {
             var claims = User.Claims;
+
             if ((claims != null) && (claims.Any()))
             {
                 var s = new StringBuilder();
@@ -32,12 +39,6 @@ namespace PmHelper.Controllers
             }
             
             return Content($"No claims IsNull={claims == null}");
-        }
-
-        [AllowAnonymous]
-        public IActionResult Index()
-        {
-            return Content("Hello there");
         }
 
         [HttpGet]
@@ -73,7 +74,33 @@ namespace PmHelper.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SingIngCallback()
         {
-            return await Task.FromResult(BadRequest());
+            // Read the outcome of external auth
+            var authResult = await HttpContext.AuthenticateAsync("temp");
+
+            if (!authResult.Succeeded)
+            {
+                return BadRequest("Bad auth");
+            }
+
+            var extUser = authResult.Principal;
+
+            var claims = new List<Claim>(extUser.Claims);
+            //var sub = extUser.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            var metadata = authResult.Properties.Items;
+
+            if (metadata.ContainsKey("scheme"))
+            {
+
+            }
+
+            // Run user authentification login (First time seen?)
+            var ci = new ClaimsIdentity(claims, "pwd", "name", "role");
+            var cp = new ClaimsPrincipal(ci);
+
+            await HttpContext.SignInAsync(cp);
+            await HttpContext.SignOutAsync("temp");
+
+            return LocalRedirect(new PathString("/auth/secure"));
         }
 
         [HttpGet]
@@ -81,10 +108,29 @@ namespace PmHelper.Controllers
         {
             var props = new AuthenticationProperties
             {
-
+                RedirectUri = new PathString("/auth/SingIngCallback"),
+                Items =
+                {
+                    { "scheme", "google" }
+                }
             };
 
             return Challenge(props, "google");
+        }
+
+        [HttpGet]
+        public IActionResult SignInOidc()
+        {
+            var props = new AuthenticationProperties
+            {
+                RedirectUri = new PathString("/auth/SingIngCallback"),
+                Items =
+                {
+                    { "scheme", "oidc" }
+                }
+            };
+
+            return Challenge(props, "oidc");
         }
     }
 }

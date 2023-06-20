@@ -10,6 +10,7 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
     <ImplicitUsings>enable</ImplicitUsings>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <UserSecretsId>b0d0cc1f-0507-4e10-9b4b-8777f47a09ef</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="6.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.7" />
