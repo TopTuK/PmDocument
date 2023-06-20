@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using PmHelper.Domain.Repository;
+using PmHelper.Domain.Services.Users;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -33,6 +35,11 @@ builder.Services
 
 internal class Program
 {
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddScoped<IUserService, UserService>();
+    }
+
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -52,8 +59,8 @@ internal class Program
             .AddCookie(Configuration["AuthTempCookieName"]!)
             .AddGoogle(Configuration["GoogleAuth:Name"]!, options =>
             {
-                options.ClientId = Configuration["GoogleAuth:ClientId"];
-                options.ClientSecret = Configuration["GoogleAuth:ClientSecret"];
+                options.ClientId = Configuration["GoogleAuth:ClientId"]!;
+                options.ClientSecret = Configuration["GoogleAuth:ClientSecret"]!;
 
                 options.CallbackPath = Configuration["GoogleAuth:Callback"]!;
                 options.SignInScheme = Configuration["AuthTempCookieName"]!;
@@ -90,13 +97,22 @@ internal class Program
                     var tokenResponse = await client.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest
                     {
                         Address = discoResponsee.TokenEndpoint,
-                        ClientId = options.ClientId,
+                        ClientId = options.ClientId!,
                         ClientSecret = options.ClientSecret,
                         Code = code,
                         RedirectUri = redirectUri,
                     });
 
-                    context.HandleCodeRedemption(tokenResponse.AccessToken, tokenResponse.IdentityToken);
+                    if (tokenResponse.IsError)
+                    {
+                        // Error handler
+                        throw new Exception("Bad auth. Can't exchange code for access token and id token");
+                    }
+
+                    var accessToken = tokenResponse.AccessToken ?? string.Empty;
+                    var idToken = tokenResponse.IdentityToken ?? string.Empty;
+
+                    context.HandleCodeRedemption(accessToken, idToken);
                 };
 
                 //options.GetClaimsFromUserInfoEndpoint = true;
@@ -104,6 +120,12 @@ internal class Program
 
                 options.SignInScheme = "temp";
             });
+
+        // Add AppDbContext
+        builder.Services.AddDbContext<AppDbContext>();
+
+        // Configure application services
+        ConfigureServices(builder.Services);
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();

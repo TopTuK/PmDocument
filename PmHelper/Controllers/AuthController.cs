@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PmHelper.Domain.Services.Users;
 using System.Security.Claims;
 using System.Text;
 
@@ -11,15 +12,24 @@ namespace PmHelper.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        public AuthController()
-        {
+        private readonly ILogger<AuthController> _logger;
 
+        private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
+
+        public AuthController(IUserService userService, IConfiguration configuration,
+            ILogger<AuthController> logger)
+        {
+            _logger = logger;
+
+            _userService = userService;
+            _configuration = configuration;
         }
 
         [AllowAnonymous]
         public IActionResult Index()
         {
-            return Content("Hello there");
+            return Content("Anonymous HELLO there");
         }
 
         [Authorize]
@@ -41,29 +51,6 @@ namespace PmHelper.Controllers
             return Content($"No claims IsNull={claims == null}");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Login(string? user, string pwd)
-        {
-            if (!string.IsNullOrWhiteSpace(user) && (user == pwd)) 
-            {
-                var claims = new List<Claim>
-                {
-                    new("sub", "1"),
-                    new("name", "Sergey"),
-                    new("role", "Admin"),
-                };
-
-                var ci = new ClaimsIdentity(claims, "pwd", "name", "role");
-                var cp = new ClaimsPrincipal(ci);
-
-                await HttpContext.SignInAsync(cp);
-
-                return LocalRedirect(new PathString("/auth/secure"));
-            }
-
-            return BadRequest();
-        }
-
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
@@ -72,65 +59,115 @@ namespace PmHelper.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> SingIngCallback()
+        public async Task<IActionResult> SinginCallback()
         {
+            _logger.LogInformation("Start authentication callback. Reading the outcome of external auth");
+
             // Read the outcome of external auth
-            var authResult = await HttpContext.AuthenticateAsync("temp");
+            var authResult = await HttpContext.AuthenticateAsync(_configuration["AuthTempCookieName"]);
 
             if (!authResult.Succeeded)
             {
-                return BadRequest("Bad auth");
+                _logger.LogError("Can't read the outcome of external authentication");
+                return LocalRedirect(new PathString("/auth/Index"));
             }
 
-            var extUser = authResult.Principal;
+            _logger.LogInformation("Authentication succeeded. Start reading claims and metadata");
 
-            var claims = new List<Claim>(extUser.Claims);
-            //var sub = extUser.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            // Read metadata with scheme
             var metadata = authResult.Properties.Items;
-
-            if (metadata.ContainsKey("scheme"))
+            if ((metadata == null) 
+                || (!metadata.ContainsKey("scheme"))
+                || (string.IsNullOrEmpty(metadata["scheme"])))
             {
-
+                _logger.LogError("Metadata doesn't contain scheme");
+                return LocalRedirect(new PathString("/auth/Index"));
             }
 
-            // Run user authentification login (First time seen?)
-            var ci = new ClaimsIdentity(claims, "pwd", "name", "role");
-            var cp = new ClaimsPrincipal(ci);
+            try
+            {
+                // TODO: authenticate user
 
-            await HttpContext.SignInAsync(cp);
-            await HttpContext.SignOutAsync("temp");
+                var user = await _userService.AuthenticateAsync(
+                    schemeName: metadata["scheme"]!,
+                    claims: authResult.Principal.Claims,
+                    metadata: metadata!
+                );
 
-            return LocalRedirect(new PathString("/auth/secure"));
+                var claims = new List<Claim>
+                {
+                    new("sub", "1"),
+                    new("name", "Sergey"),
+                    new("lastname", "Sidorov"),
+                    new("role", "Admin"),
+                };
+
+                // Run user authentification login (First time seen?)
+                var ci = new ClaimsIdentity(claims, "pwd", "name", "role");
+                //var ci = new ClaimsIdentity(claims);
+                var cp = new ClaimsPrincipal(ci);
+
+                await HttpContext.SignInAsync(cp);
+                await HttpContext.SignOutAsync("temp");
+
+                return LocalRedirect(new PathString("/auth/secure"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Can't authentificate user");
+                return LocalRedirect(new PathString("/auth/Index"));
+            }
         }
 
         [HttpGet]
         public IActionResult SignInGoogle()
         {
+            _logger.LogInformation("Start SignInGoogle authentication");
+
+            var schemeName = _configuration["GoogleAuth:Name"];
+
+            if (schemeName == null)
+            {
+                _logger.LogError("SignInGoogle: scheme name is null");
+                return BadRequest("Scheme name is null");
+            }
+
             var props = new AuthenticationProperties
             {
-                RedirectUri = new PathString("/auth/SingIngCallback"),
+                RedirectUri = new PathString("/auth/SinginCallback"),
                 Items =
                 {
-                    { "scheme", "google" }
+                    { "scheme", schemeName },
                 }
             };
 
-            return Challenge(props, "google");
+            _logger.LogInformation($"Start Google challenge with Scheme name: {schemeName}");
+            return Challenge(props, schemeName);
         }
 
         [HttpGet]
         public IActionResult SignInOidc()
         {
+            _logger.LogInformation("Start SignInOidc authentication");
+
+            var schemeName = _configuration["OidcAuth:Name"];
+            
+            if (schemeName == null)
+            {
+                _logger.LogError("SignInOidc: scheme name is null");
+                return BadRequest("Scheme name is null");
+            }
+
             var props = new AuthenticationProperties
             {
-                RedirectUri = new PathString("/auth/SingIngCallback"),
+                RedirectUri = new PathString("/auth/SinginCallback"),
                 Items =
                 {
-                    { "scheme", "oidc" }
+                    { "scheme", schemeName }
                 }
             };
 
-            return Challenge(props, "oidc");
+            return Challenge(props, schemeName);
         }
     }
 }

@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PmHelper", "PmHelper\PmHelper.csproj", "{0C992875-540D-47E9-A0CA-10C1ABFFCC7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetChatGptCLient", "NetChatGpt\NetChatGptCLient.csproj", "{7C85ABC5-7BFC-4E9A-BE22-7AE43A9E7208}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetChatGptClient", "NetChatGpt\NetChatGptClient.csproj", "{7C85ABC5-7BFC-4E9A-BE22-7AE43A9E7208}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatGpt.Console", "ChatGpt.Console\ChatGpt.Console.csproj", "{4647F283-5733-4108-BDE5-8C4191494F1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatGpt.Console", "ChatGpt.Console\ChatGpt.Console.csproj", "{4647F283-5733-4108-BDE5-8C4191494F1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
