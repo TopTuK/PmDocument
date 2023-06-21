@@ -84,31 +84,35 @@ namespace PmHelper.Controllers
                 return LocalRedirect(new PathString("/auth/Index"));
             }
 
+            var schemeName = metadata["scheme"]!;
+            _logger.LogInformation($"Authentication scheme name is \"{schemeName}\"");
+
             try
             {
-                // TODO: authenticate user
-
                 var user = await _userService.AuthenticateAsync(
-                    schemeName: metadata["scheme"]!,
+                    schemeName: schemeName,
                     claims: authResult.Principal.Claims,
                     metadata: metadata!
                 );
 
+                _logger.LogInformation($"Authenticated user: {user.Email} {user.FirstName} {user.LastName}");
+
                 var claims = new List<Claim>
                 {
-                    new("sub", "1"),
-                    new("name", "Sergey"),
-                    new("lastname", "Sidorov"),
-                    new("role", "Admin"),
+                    new("sub", user.Email),
+                    new("firstname", user.FirstName),
+                    new("lastname", user.LastName),
                 };
 
                 // Run user authentification login (First time seen?)
-                var ci = new ClaimsIdentity(claims, "pwd", "name", "role");
-                //var ci = new ClaimsIdentity(claims);
+                //var ci = new ClaimsIdentity(claims, "pwd", "name", "role");
+                var ci = new ClaimsIdentity(claims, schemeName);
                 var cp = new ClaimsPrincipal(ci);
 
                 await HttpContext.SignInAsync(cp);
                 await HttpContext.SignOutAsync("temp");
+
+                _logger.LogInformation("Success SignIn user");
 
                 return LocalRedirect(new PathString("/auth/secure"));
             }

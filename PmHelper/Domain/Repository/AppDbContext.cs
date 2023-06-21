@@ -13,6 +13,8 @@ namespace PmHelper.Domain.Repository
         private readonly ILogger<AppDbContext> _logger;
         private readonly IConfiguration _configuration;
 
+        public DbSet<DbUser> Users { get; set; }
+
         public AppDbContext(ILogger<AppDbContext> logger, IConfiguration configuration)
         {
             _logger = logger;
@@ -30,6 +32,13 @@ namespace PmHelper.Domain.Repository
             _logger.LogInformation("End configuration database context");
         }
 
-        public DbSet<DbUser> Users { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<DbUser>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            base.OnModelCreating(builder);
+        }
     }
 }
