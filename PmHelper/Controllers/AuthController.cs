@@ -55,7 +55,7 @@ namespace PmHelper.Controllers
         {
             await HttpContext.SignOutAsync();
 
-            return LocalRedirect(new PathString("/auth/Index"));
+            return LocalRedirect(new PathString("/"));
         }
 
         [AllowAnonymous]
@@ -69,7 +69,7 @@ namespace PmHelper.Controllers
             if (!authResult.Succeeded)
             {
                 _logger.LogError("Can't read the outcome of external authentication");
-                return LocalRedirect(new PathString("/auth/Index"));
+                return LocalRedirect(new PathString("/"));
             }
 
             _logger.LogInformation("Authentication succeeded. Start reading claims and metadata");
@@ -81,7 +81,7 @@ namespace PmHelper.Controllers
                 || (string.IsNullOrEmpty(metadata["scheme"])))
             {
                 _logger.LogError("Metadata doesn't contain scheme");
-                return LocalRedirect(new PathString("/auth/Index"));
+                return LocalRedirect(new PathString("/"));
             }
 
             var schemeName = metadata["scheme"]!;
@@ -114,12 +114,13 @@ namespace PmHelper.Controllers
 
                 _logger.LogInformation("Success SignIn user");
 
-                return LocalRedirect(new PathString("/auth/secure"));
+                // return LocalRedirect(new PathString("/auth/secure"));
+                return LocalRedirect(new PathString("/profile"));
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Can't authentificate user");
-                return LocalRedirect(new PathString("/auth/Index"));
+                return LocalRedirect(new PathString("/"));
             }
         }
 

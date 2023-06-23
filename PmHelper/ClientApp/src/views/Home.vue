@@ -19,10 +19,35 @@
                     </div>
                 </article>
 
-                <div class="self-center hidden sm:block">
-                    HELLO WORLD
+                <div class="self-start order-first lg:order-none lg:pt-2">
+                    <div class="mockup-window border shadow-xl sm:shadow-2xl border-base-300 bg-slate-900">
+                        <img src="@/assets/images/project-charter.webp" class="bg-base-100" alt="Project charter" />
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+.mockup-window {
+    border-radius: var(--rounded-box,1rem);
+    overflow: hidden;
+    overflow-x: auto;
+    padding-top: 1.25rem;
+    position: relative;
+}
+
+.mockup-window:before {
+    border-radius: 9999px;
+    box-shadow: 1.4em 0, 2.8em 0, 4.2em 0;
+    content: "";
+    padding-left: 1rem;
+    color: white;
+    display: block;
+    height: 0.75rem;
+    margin-bottom: 1rem;
+    opacity: .3;
+    width: 0.75rem;
+}
+</style>

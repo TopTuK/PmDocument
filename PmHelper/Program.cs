@@ -54,7 +54,7 @@ internal class Program
                 options.Cookie.Name = Configuration["AuthDefaultCookieName"];
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
-                options.LoginPath = new PathString("/auth/index");
+                options.LoginPath = new PathString("/profile");
             })
             .AddCookie(Configuration["AuthTempCookieName"]!)
             .AddGoogle(Configuration["GoogleAuth:Name"]!, options =>
