@@ -53,9 +53,11 @@ namespace PmHelper.Domain.Services.Users
         {
             try
             {
+                _logger.LogInformation($"Get or Create user with email: {email}");
                 var dbUser = await _dbContext.Users
                     .FirstOrDefaultAsync(u => u.Email == email);
 
+                _logger.LogInformation($"User with {email} found result: {dbUser == null}");
                 if (dbUser == null)
                 {
                     dbUser = new DbUser
@@ -65,6 +67,8 @@ namespace PmHelper.Domain.Services.Users
                         Email = email
                     };
 
+                    _logger.LogInformation($"Creating new user: {email} {firstName} {lastName}");
+
                     await _dbContext.Users.AddAsync(dbUser);
                     await _dbContext.SaveChangesAsync();
 
@@ -72,6 +76,7 @@ namespace PmHelper.Domain.Services.Users
                 }
                 else
                 {
+                    _logger.LogInformation($"User exists: {dbUser.Email} {dbUser.FirstName} {dbUser.LastName}");
                     return new User(dbUser);
                 }
             }
@@ -100,7 +105,60 @@ namespace PmHelper.Domain.Services.Users
 
         private static UserInfo GetOidcUserInfo(IEnumerable<Claim> claims)
         {
-            return new();
+            var sub = claims
+                .FirstOrDefault(c => c.Type == "sub")?
+                .Value;
+            var name = claims
+                .FirstOrDefault(c => c.Type == "name")?
+                .Value;
+            var email = claims
+                .FirstOrDefault(c => c.Type == "email")?
+                .Value;
+
+            if (name != null)
+            {
+                var splitName = name.Split(' ');
+                var firstName = splitName[0];
+                var lastName = string.Empty;
+
+                if (splitName.Length > 1)
+                {
+                    lastName = splitName[1].Trim();
+                }
+
+                return new()
+                {
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Sub = sub,
+                };
+            }
+
+            return new()
+            {
+                Email = email,
+                FirstName = sub ?? "Anonymous",
+                LastName = string.Empty,
+                Sub = sub,
+            };
+        }
+
+        private UserInfo GetUserInfo(string schemeName, IEnumerable<Claim> claims)
+        {
+            if (schemeName == _googleSchemeName)
+            {
+                return GetGoogleUserInfo(claims);
+            }
+            else if (schemeName == _oidcSchemeName)
+            {
+                return GetOidcUserInfo(claims);
+            }
+            else
+            {
+                _logger.LogCritical($"Unknown scheme name \"{schemeName}\"");
+                throw new AuthenticationException($"Unknown scheme name \"{schemeName}\"");
+            }
         }
 
         public async Task<IUser> AuthenticateAsync(string schemeName,
@@ -108,39 +166,18 @@ namespace PmHelper.Domain.Services.Users
         {
             _logger.LogInformation($"Start authenticating user with scheme \"{schemeName}\"");
 
-            if (schemeName == _googleSchemeName)
+            var userInfo = GetUserInfo(schemeName, claims);
+            _logger.LogInformation($"UserInfo: {userInfo.Email} {userInfo.FirstName} {userInfo.LastName}");
+
+            if (userInfo.Email == null)
             {
-                var userInfo = GetGoogleUserInfo(claims);
-
-                if (userInfo.Email == null)
-                {
-                    _logger.LogError("GoogleAuthScheme: user email claim is null");
-                    throw new AuthenticationException("GoogleAuthScheme: user email claim is null");
-                }
-
-                var user = await GetOrCreateUserAsync(userInfo.Email, userInfo.FirstName, userInfo.LastName);
-
-                return user;
+                _logger.LogError("GoogleAuthScheme: user email claim is null");
+                throw new AuthenticationException("GoogleAuthScheme: user email claim is null");
             }
-            else if (schemeName == _oidcSchemeName)
-            {
-                var userInfo = GetOidcUserInfo(claims);
 
-                if (userInfo.Email == null)
-                {
-                    _logger.LogError("OidcAuthScheme: user email claim is null");
-                    throw new AuthenticationException("OidcScheme: user email claim is null");
-                }
+            var user = await GetOrCreateUserAsync(userInfo.Email, userInfo.FirstName, userInfo.LastName);
 
-                var user = await GetOrCreateUserAsync(userInfo.Email, userInfo.FirstName, userInfo.LastName);
-
-                return user;
-            }
-            else
-            {
-                _logger.LogCritical($"Unknown scheme name \"{schemeName}\"");
-                throw new AuthenticationException($"Unknown scheme name \"{schemeName}\"");
-            }
+            return user;
         }
     }
 }

@@ -3,9 +3,9 @@ import { createVuestic } from 'vuestic-ui'
 
 import router from "@/router/index.js";
 
-import './index.css'
 import 'vuestic-ui/css'
 
+import './index.css'
 import App from './App.vue'
 
 // Create app

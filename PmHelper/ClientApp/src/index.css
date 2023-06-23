@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
 ::-webkit-scrollbar {
     width: 7px;
 }
@@ -17,3 +18,4 @@
 ::-webkit-scrollbar-thumb:hover{
     background: #718096;
 }
+*/

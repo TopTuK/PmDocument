@@ -1,16 +1,20 @@
 <script setup>
 import Header from '@/components/Header.vue'
-// import Footer from '@/components/Footer.vue'
+import Footer from '@/components/Footer.vue'
 </script>
 
 <template>
-    <div class="bg-gray-400 leading-normal tracking-normal">
-        <div class="h-screen">
+    <div class="flex flex-col h-screen bg-gray-400 tracking-normal leading-normal">
+        <div class="flex-none">
             <Header />
+        </div>
 
-            <main class="flex flex-wrap flex-col pt-3 items-center">
-                <slot />
-            </main>
+        <div class="flex flex-1 bg-slate-500">
+            <slot />
+        </div>
+
+        <div class="flex-none">
+            <Footer />
         </div>
     </div>
 </template>

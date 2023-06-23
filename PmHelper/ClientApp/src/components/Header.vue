@@ -1,29 +1,20 @@
 <template>
-    <header class="bg-gray-800 p-2 mt-0 w-full z-10 top-0">        
-        <div class="row mx-auto items-center">
-
-            <div class="flex-1 text-white font-extrabold">
-                <a class="text-white no-underline hover:text-white hover:no-underline" href="#">
-                    <span class="text-2x1 pl-2">PM Helper</span>
-                </a>
-            </div>
-
-            <div class="flex-none">
-                <ul class="list-reset flex justify-end flex-1 md:flex-none items-center">
-                    <li class="mr-3">
-                        <a class="inline-block py-2 px-4 text-white no-underline" href="#">
-                            Sing In
-                        </a>
-                    </li>
-
-                    <li class="mr-3">
-                        <a class="inline-block text-gray-600 no-underline hober:text-gray-200 hover:text-underline py-2 px-4" href="#">
-                            About
-                        </a>
-                    </li>
-                </ul>
-            </div>
+    <nav class="flex flex-row items-center justify-between h-16 bg-gray-800 p-2 w-full">        
+        <div class="text-white font-extrabold">
+            <router-link
+                to="/"
+                class="no-underline hover:text-white hover:no-underline">
+                <span class="text-2xl pl-2">PM Helper</span>
+            </router-link>
         </div>
-    </header>
 
+        <div class="inline-flex gap-6 justify-end items-center">
+            <router-link
+                to="/login"
+                class="items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            >
+                Sign In
+            </router-link>
+        </div>
+    </nav>
 </template>
