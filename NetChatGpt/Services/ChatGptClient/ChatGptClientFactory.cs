@@ -26,9 +26,27 @@ namespace NetChatGptCLient.Services.ChatGptClient
             }
         }
 
+        private record ChatGptApiUrlOptions : ChatGptClientOptions, IChatGptOptions
+        {
+            public string ApiUrl { get; init; }
+
+            public ChatGptApiUrlOptions(string apiUrl, string apiSecret) : base(apiSecret)
+            {
+                ApiUrl = apiUrl;
+            }
+        }
+
         public static IChatGptClient CreateDefaultClient(string apiSecret)
         {
             var options = new ChatGptClientOptions(apiSecret);
+            var cache = new DefaultConversationCache();
+
+            return new ChatGptClientImpl(options, cache);
+        }
+
+        public static IChatGptClient CreateApiClient(string apiUrl, string apiSecret)
+        {
+            var options = new ChatGptApiUrlOptions(apiUrl, apiSecret);
             var cache = new DefaultConversationCache();
 
             return new ChatGptClientImpl(options, cache);

@@ -25,7 +25,7 @@ async function chatCompletions(req, res) {
             }
 
             if (DEBUG) {
-                console.log(`[CHAT MESSAGE] [${req.user.data.id}] [${req.user.data.name}] [MAX-TOKENS:${req.body.max_tokens ?? "unset"}] ${prompt}`);
+                console.log(`[CHAT MESSAGE] [MAX-TOKENS:${req.body.max_tokens ?? "unset"}] ${prompt}`);
             }
 
             let openAi = new OpenAIApi(new Configuration({ apiKey: key }));
@@ -56,7 +56,7 @@ async function chatCompletions(req, res) {
     }
     else {
         if (DEBUG) {
-            console.log(`[CHAT] [${req.user.data.id}] [${req.user.data.name}] [MAX-TOKENS:${req.body.max_tokens ?? "unset"}]`);
+            console.log(`[CHAT] [MAX-TOKENS:${req.body.max_tokens ?? "unset"}]`);
         }
     }
 
