@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetChatGptClient", "NetChat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatGpt.Console", "ChatGpt.Console\ChatGpt.Console.csproj", "{4647F283-5733-4108-BDE5-8C4191494F1F}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ChatGptProxy", "ChatGptProxy\ChatGptProxy.esproj", "{257A2321-BA5C-4F95-9377-64BF0B11F7E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,12 @@ Global
 		{4647F283-5733-4108-BDE5-8C4191494F1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4647F283-5733-4108-BDE5-8C4191494F1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4647F283-5733-4108-BDE5-8C4191494F1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{257A2321-BA5C-4F95-9377-64BF0B11F7E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{257A2321-BA5C-4F95-9377-64BF0B11F7E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{257A2321-BA5C-4F95-9377-64BF0B11F7E3}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{257A2321-BA5C-4F95-9377-64BF0B11F7E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{257A2321-BA5C-4F95-9377-64BF0B11F7E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{257A2321-BA5C-4F95-9377-64BF0B11F7E3}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
