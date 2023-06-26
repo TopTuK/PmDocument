@@ -10,11 +10,29 @@
 
         <div class="inline-flex gap-6 justify-end items-center">
             <router-link
+                v-if="!isAuthenticated"
                 to="/login"
                 class="items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
                 Sign In
             </router-link>
+            <router-link
+                v-else
+                to="/profile"
+                class="items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            >
+                Profile
+            </router-link>
         </div>
     </nav>
 </template>
+
+<script setup>
+import { computed } from "vue";
+import useAuthService from "@/services/authService.js";
+
+const authService = useAuthService();
+const isAuthenticated = computed(() => {
+    return authService.isAuthenticated();
+});
+</script>

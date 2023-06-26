@@ -17,5 +17,12 @@ namespace PmHelper.Domain.Services.Users
         /// <returns></returns>
         Task<IUser> AuthenticateAsync(string schemeName,
             IEnumerable<Claim> claims, IDictionary<string, string> metadata);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        Task<IUser> GetUserInfoAsync(string email);
     }
 }

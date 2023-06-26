@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
-import { createVuestic } from 'vuestic-ui'
+import { createApp } from 'vue';
+import { createVuestic } from 'vuestic-ui';
 
 import router from "@/router/index.js";
 

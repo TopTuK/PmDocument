@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
+import useAuthService from "@/services/authService.js"
+
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 import Documents from '@/views/Documents.vue'
@@ -35,9 +37,12 @@ const routes = [
         component: Profile,
         meta: {
             title: "profile_title",
+            requiresAuth: true,
         },
     },
 ];
+
+const authService = useAuthService();
 
 const router = createRouter({
     //history: createWebHashHistory(),
@@ -46,6 +51,29 @@ const router = createRouter({
     scrollBehavior(to, from, savedPosition) {
         return savedPosition || { top: 0 };
     },
+});
+
+router.beforeEach(async (to, from) => {
+    console.log(`Router befoareach: ${from.name} -> ${to.name} (${to.meta.requiresAuth})`);
+
+    if (to.meta.requiresAuth) {
+        try {
+            const isAuthenticated = authService.isAuthenticated();
+            console.log(`Route to \"${to.name}\" auth result: ${isAuthenticated}`);
+
+            return isAuthenticated;
+        }
+        catch (error) {
+            if (error instanceof NotAllowedError) {
+                // handle the error and then cancel the navigation
+                return false
+            } 
+            else {
+                // unexpected error, cancel the navigation and pass the error to the global handler
+                throw error
+            }
+        }
+    }
 });
 
 export default router;

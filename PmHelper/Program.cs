@@ -52,9 +52,11 @@ internal class Program
             .AddCookie(Configuration["AuthDefaultSchemeName"]!, options =>
             {
                 options.Cookie.Name = Configuration["AuthDefaultCookieName"];
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.ExpireTimeSpan = TimeSpan.FromDays(1.0);
 
-                options.LoginPath = new PathString("/profile");
+                options.Cookie.HttpOnly = false;
+
+                options.LoginPath = new PathString("/login");
             })
             .AddCookie(Configuration["AuthTempCookieName"]!)
             .AddGoogle(Configuration["GoogleAuth:Name"]!, options =>

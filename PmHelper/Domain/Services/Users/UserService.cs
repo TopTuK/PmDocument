@@ -179,5 +179,10 @@ namespace PmHelper.Domain.Services.Users
 
             return user;
         }
+
+        public async Task<IUser> GetUserInfoAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
