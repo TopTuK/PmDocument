@@ -61,6 +61,9 @@ router.beforeEach(async (to, from) => {
             const isAuthenticated = authService.isAuthenticated();
             console.log(`Route to \"${to.name}\" auth result: ${isAuthenticated}`);
 
+            if (!isAuthenticated) {
+                return { name: 'Login' }
+            }
             return isAuthenticated;
         }
         catch (error) {

@@ -182,7 +182,53 @@ namespace PmHelper.Domain.Services.Users
 
         public async Task<IUser> GetUserInfoAsync(string email)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation($"Get user information with email={email}");
+
+            try
+            {
+                var dbUser = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.Email == email);
+
+                if (dbUser == null)
+                {
+                    _logger.LogCritical($"User with email {email} is not found!");
+                    throw new UserException();
+                }
+
+                _logger.LogInformation($"Found user with email {email}: {dbUser.FirstName} {dbUser.LastName}");
+                return new User(dbUser);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"Exception raised {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task DeleteUserAsync(string email)
+        {
+            _logger.LogInformation($"Delete user information with email={email}");
+
+            try
+            {
+                var dbUser = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.Email == email);
+
+                if (dbUser == null)
+                {
+                    _logger.LogCritical($"User with email {email} is not found!");
+                    throw new UserException();
+                }
+
+                _logger.LogWarning($"Removing user with email=\"{dbUser.Email}\" from database");
+                _dbContext.Remove(dbUser);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"Exception raised {ex.Message}");
+                throw;
+            }
         }
     }
 }

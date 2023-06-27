@@ -17,8 +17,8 @@
             <hr class="mt-8" />
 
             <div class="flex justify-center items-center gap-3 p-4">
-                <va-button preset="primary">Edit profile</va-button>
-                <va-button color="danger">Log out</va-button>
+                <va-button preset="danger">Remove profile</va-button>
+                <va-button color="warning">Log out</va-button>
             </div>
 
             <div

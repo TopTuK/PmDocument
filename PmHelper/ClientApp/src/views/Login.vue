@@ -1,9 +1,9 @@
 <template>
-    <div class="relative py-12 sm:max-w-xl sm:mx-auto">
-        <div class="absolute top-10 max-h-96 inset-0 bg-gradient-to-r from-blue-300 to-blue-600 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl">
+    <div class="relative py-16 sm:max-w-xl sm:mx-auto">
+        <div class="absolute top-14 max-h-96 inset-0 bg-gradient-to-r from-blue-300 to-blue-600 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl">
         </div>
 
-        <div class="relative mt-8 px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-30">
+        <div class="relative mt-10 px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-30">
             <div class="max-w-md mx-auto">
                 <div>
                     <h1 class="text-2xl font-semibold text-cyan-900">
