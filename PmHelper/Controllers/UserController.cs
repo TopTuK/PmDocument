@@ -15,7 +15,6 @@ namespace PmHelper.Controllers
         public UserController(IUserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
-
             _logger = logger;
         }
 
@@ -34,6 +33,7 @@ namespace PmHelper.Controllers
             {
                 var user = await _userService.GetUserInfoAsync(userEmail);
 
+                _logger.LogInformation($"Get user {user.Email} {user.FirstName} {user.LastName}");
                 return new JsonResult(user);
             }
             catch (Exception ex)

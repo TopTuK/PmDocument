@@ -10,10 +10,12 @@ async function rateLimitMiddleware(req, res, next) {
         ?? req.ip;
     
     if (DEBUG) {
-        console.log(`Get request from ${ip}`);
+        console.log(`Client request from ${ip}`);
     }
     
     if (!WHITELISTED_IPS.includes(ip)) {
+        console.warn(`Whitelist of ip adresses doesn\'t containt ${ip}. Return bad request.`);
+
         return res.status(429).send({
             status: false,
             error: `Bad IP address: ${ip}`
@@ -21,16 +23,33 @@ async function rateLimitMiddleware(req, res, next) {
     }
         
     if (!rateLimit.has(ip)) {
+        if (DEBUG) {
+            console.log(`Set rate limit for ip ${ip}`);
+        }
+
         rateLimit.set(ip, {
             requests: 1,
             lastRequestTime: Date.now(),
         });
     }
-    else { // 
+    else { //
+        if (DEBUG) {
+            console.log(`Fount ${ip} in rate limit map.`);
+        }
+
         const currentTime = Date.now();
         const timeSinceLastRequest = currentTime - rateLimit.get(ip).lastRequestTime;
+        const isTimeDelta = timeSinceLastRequest > RATE_PERIOD;
 
-        if (timeSinceLastRequest > RATE_PERIOD) {
+        if (DEBUG) {
+            console.log(`For ${ip} timeSinceLastRequest > RATE_PERIOD: ${isTimeDelta}`);
+        }
+
+        if (isTimeDelta) {
+            if (DEBUG) {
+                console.log(`Set first request for ip ${ip}. Current time: ${currentTime}`);
+            }
+
             rateLimit.set(ip, {
                 requests: 1,
                 lastRequestTime: currentTime
@@ -39,10 +58,18 @@ async function rateLimitMiddleware(req, res, next) {
         else {
             let requestsCount = rateLimit.get(ip).requests + 1;
 
+            if (DEBUG) {
+                console.log(`Increment request count for ${ip}. Total requests: ${requestsCount}`);
+            }
+
             if (requestsCount > RATE_LIMIT) {
+                if (DEBUG) {
+                    console.warn(`For ip ${ip} total requests (${requestsCount}) > RATE_LIMIT. Returning bad request`);
+                }
+
                 return res.status(429).send({
                     status: false,
-                    error: "Too many requests, please try again later"
+                    error: "Too many requests, please try again later",
                 });
             }
 

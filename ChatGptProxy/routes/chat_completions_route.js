@@ -1,12 +1,18 @@
-import axios from "axios";
+﻿import axios from "axios";
 import { Configuration, OpenAIApi } from "openai";
 
-import { DEBUG, MODERATION } from "../config.js";
+import { DEBUG, MODERATION, CHAT_COMPLETIONS_URL } from "../config.js";
 import { streamCompletion, generateId, getOpenAIKey } from "../utils.js";
 
 async function chatCompletions(req, res) {
-    let orgId = generateId(); // Generate organistation ID
     let key = getOpenAIKey(DEBUG); // Get OpenAI Key
+    let orgId = generateId(); // Generate organistation ID
+
+    if (DEBUG) {
+        console.log(`ChatGPT Key: ${key}`);
+        console.log(`ChatGPT Org name: ${orgId}`);
+        console.log(`Moderation: ${MODERATION}`);
+    }
 
     if (MODERATION) {
         try {
@@ -16,8 +22,14 @@ async function chatCompletions(req, res) {
                 req.body.messages.forEach(el => {
                     prompt.push(el.content);
                 });
+
+                if (DEBUG) {
+                    console.log(`Moderation messages length: ${prompt.length}`);
+                }
             }
             catch (e) {
+                console.error("Messages is required! and must be an array of objects with content and author properties");
+
                 return res.status(400).send({
                     status: false,
                     error: "Messages is required! and must be an array of objects with content and author properties"
@@ -25,7 +37,9 @@ async function chatCompletions(req, res) {
             }
 
             if (DEBUG) {
-                console.log(`[CHAT MESSAGE] [MAX-TOKENS:${req.body.max_tokens ?? "unset"}] ${prompt}`);
+                console.log(`Moderation Max-Tokens: ${req.body.max_tokens ?? "unset"}`);
+                console.log(`Moderation messages: ${prompt}`);
+                console.log("Send promt messages for moderation");
             }
 
             let openAi = new OpenAIApi(new Configuration({ apiKey: key }));
@@ -33,7 +47,14 @@ async function chatCompletions(req, res) {
                 input: prompt,
             });
 
+            if (DEBUG) {
+                console.log(`OpenAI moderation response: ${response.data.results}`);
+            }
+
             if (response.data.results[0].flagged) {
+                console.warn("Prompt contains content that is not allowed! Return bad request");
+                console.warn(`Moderation reason: ${response.data.results[0].reason}`);
+
                 res.set("Content-Type", "application/json");
 
                 return res.status(400).send({
@@ -44,9 +65,7 @@ async function chatCompletions(req, res) {
             }
         }
         catch (error) {
-            if (DEBUG) {
-                console.log(error);
-            }
+            console.error(`Moderation exception: ${error}`);
 
             return res.status(500).send({
                 status: false,
@@ -56,14 +75,18 @@ async function chatCompletions(req, res) {
     }
     else {
         if (DEBUG) {
-            console.log(`[CHAT] [MAX-TOKENS:${req.body.max_tokens ?? "unset"}]`);
+            console.log(`Moderation is not set. Max-Tokens: ${req.body.max_tokens ?? "unset"}`);
         }
     }
 
     if (req.body.stream) { // Stream request
+        if (DEBUG) {
+            console.log("Start proxing stream request");
+        }
+
         try {
             const response = await axios.post(
-                `https://api.openai.com/v1/chat/completions`, req.body,
+                CHAT_COMPLETIONS_URL, req.body,
                 {
                     responseType: "stream",
                     headers: {
@@ -74,11 +97,19 @@ async function chatCompletions(req, res) {
                 },
             );
 
+            if (DEBUG) {
+                console.log("Got stream response from OpenAI");
+            }
+
             res.setHeader("content-type", "text/event-stream");
 
             for await (const message of streamCompletion(response.data)) {
                 try {
                     const parsed = JSON.parse(message);
+
+                    if (DEBUG) {
+                        console.log(`Parsed response: ${parsed}`);
+                    }
 
                     delete parsed.id;
                     delete parsed.created;
@@ -110,6 +141,8 @@ async function chatCompletions(req, res) {
 
                     errorResponseStr = errorResponseStr.replace(/org-[a-zA-Z0-9]+/, orgId);
                     const errorResponseJson = JSON.parse(errorResponseStr);
+
+                    console.error(`Stream response status: ${error.response.status}. Error: ${errorResponseJson}`);
                     return res.status(error.response.status).send(errorResponseJson);
                 }
                 else {
@@ -124,9 +157,7 @@ async function chatCompletions(req, res) {
                 }
             }
             catch (e) {
-                if (DEBUG) { 
-                    console.log(e);
-                }
+                console.error("Exception raised.", e);
 
                 return res.status(500).send({
                     status: false,
@@ -136,9 +167,13 @@ async function chatCompletions(req, res) {
         }
     }
     else { // Common request (not stream)
+        if (DEBUG) {
+            console.log("Start proxing сommon request");
+        }
+
         try {
             const response = await axios.post(
-                `https://api.openai.com/v1/chat/completions`, req.body,
+                CHAT_COMPLETIONS_URL, req.body,
                 {
                     headers: {
                         Accept: "application/json",
@@ -148,6 +183,10 @@ async function chatCompletions(req, res) {
                 },
             );
 
+            if (DEBUG) {
+                console.log(`Got respose from OpenAI: ${response.data}`);
+            }
+
             delete response.data.id;
             delete response.data.created;
 
@@ -156,12 +195,12 @@ async function chatCompletions(req, res) {
         catch (error) {
             try {
                 error.response.data.error.message = error.response.data.error.message.replace(/org-[a-zA-Z0-9]+/, orgId);
+
+                console.error(`Response error status: ${error.response.status}. Message: ${error.response.data}`);
                 return res.status(error.response.status).send(error.response.data);
             }
             catch (e) {
-                if (DEBUG) {
-                    console.log(e);
-                }
+                console.error("Exception raised", e);
 
                 return res.status(500).send({
                     status: false,
