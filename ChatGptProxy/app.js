@@ -26,7 +26,7 @@ app.use(urlencoded({ extended: true }));
 app.all("/", async function (req, res) {
 
     if (DEBUG) {
-        console.log("Got request to route. Return status information");
+        console.log("Got request to \"/\" route. Return status information");
     }
 
     res.set("Content-Type", "application/json");

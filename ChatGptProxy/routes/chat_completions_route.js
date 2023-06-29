@@ -121,9 +121,7 @@ async function chatCompletions(req, res) {
                     }
                 }
                 catch (error) {
-                    if (DEBUG) {
-                        console.error("Could not JSON parse stream message", message, error);
-                    }
+                    console.error("Could not JSON parse stream message", message, error);
                 }
             }
 
@@ -146,10 +144,7 @@ async function chatCompletions(req, res) {
                     return res.status(error.response.status).send(errorResponseJson);
                 }
                 else {
-                    if (DEBUG) {
-                        console.error("Could not JSON parse stream message", error);
-                    }
-
+                    console.error("Could not JSON parse stream message", error);
                     return res.status(500).send({
                         status: false,
                         error: "Something went wrong!"
@@ -168,7 +163,7 @@ async function chatCompletions(req, res) {
     }
     else { // Common request (not stream)
         if (DEBUG) {
-            console.log("Start proxing сommon request");
+            console.log("Start proxing common request");
         }
 
         try {

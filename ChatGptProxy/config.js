@@ -13,6 +13,7 @@ export const RATE_PERIOD = 15 * 1000; // 15 seconds
 export const RATE_LIMIT = 50; // 50 requests per 15 seconds
 
 // Completions URLS
+export const COMPLETIONS_URL = "https://api.openai.com/v1/completions";
 export const CHAT_COMPLETIONS_URL = "https://api.openai.com/v1/chat/completions";
 
 // Whitelisted IPs
