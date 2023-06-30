@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PmHelper.Domain.Services.Users;
+using System.Security.Claims;
 
 namespace PmHelper.Controllers
 {
@@ -20,50 +22,46 @@ namespace PmHelper.Controllers
 
         public async Task<IActionResult> GetUserInfo()
         {
-            var userEmail = User.FindFirst("sub")?.Value;
-            _logger.LogInformation($"Get user information. Email={userEmail}");
-
-            if (userEmail == null)
+            // Get User Id
+            int userId = -1;
+            if (!int.TryParse(User.FindFirstValue("sub"), out userId))
             {
-                _logger.LogError("User is not authenticated");
-                return BadRequest();
+                _logger.LogError("UserController::GetUserInfo: User is not authenticated. Can't find user id");
+                return BadRequest("Not authenticated");
             }
 
-            try
+            var user = await _userService.GetUserById(userId);
+            if (user == null)
             {
-                var user = await _userService.GetUserInfoAsync(userEmail);
+                _logger.LogError($"UserController::GetUserInfo: user with Id={userId} is not found");
+                return BadRequest("User is not found");
+            }
 
-                _logger.LogInformation($"Get user {user.Email} {user.FirstName} {user.LastName}");
-                return new JsonResult(user);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical($"Exception raised. Message: {ex.Message}");
-                return BadRequest(ex.Message);
-            }
+            _logger.LogInformation($"UserController::GetUserInfo: found user {user.Email} {user.FirstName} {user.LastName}");
+            return new JsonResult(user);
         }
 
         public async Task<IActionResult> DeleteUser()
         {
-            var userEmail = User.FindFirst("sub")?.Value;
-            _logger.LogInformation($"Remove user. Email={userEmail}");
-
-            if (userEmail == null)
+            // Get User Id
+            int userId = -1;
+            if (!int.TryParse(User.FindFirstValue("sub"), out userId))
             {
-                _logger.LogError("User is not authenticated");
-                return BadRequest();
+                _logger.LogError("UserController::DeleteUser: User is not authenticated. Can't find user id");
+                return BadRequest("Not authenticated");
             }
 
             try
             {
-                await _userService.DeleteUserAsync(userEmail);
+                _logger.LogInformation($"UserController::DeleteUser: removing user with Id={userId}");
+                await _userService.DeleteUserAsync(userId);
 
-                _logger.LogInformation($"Succesfully delete user with email={userEmail}");
-                return Ok(userEmail);
+                await HttpContext.SignOutAsync();
+                return Ok(userId);
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"Exception raised. Message: {ex.Message}");
+                _logger.LogError($"UserController::DeleteUser: Exception raised. Msg: {ex.Message}");
                 return BadRequest(ex.Message);
             }
         }

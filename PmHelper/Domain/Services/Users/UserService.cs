@@ -56,11 +56,12 @@ namespace PmHelper.Domain.Services.Users
             try
             {
                 _logger.LogInformation($"Get or Create user with email: {email}");
+                
                 var dbUser = await _dbContext.Users
                     .FirstOrDefaultAsync(u => u.Email == email);
-
                 _logger.LogInformation($"User with {email} found result: {dbUser == null}");
-                if (dbUser == null)
+
+                if (dbUser == null) // Create user
                 {
                     dbUser = new DbUser
                     {
@@ -78,7 +79,7 @@ namespace PmHelper.Domain.Services.Users
                 }
                 else
                 {
-                    _logger.LogInformation($"User exists: {dbUser.Email} {dbUser.FirstName} {dbUser.LastName}");
+                    _logger.LogInformation($"User exists: {dbUser.Id} {dbUser.Email} {dbUser.FirstName} {dbUser.LastName}");
                     return new User(dbUser);
                 }
             }
@@ -182,53 +183,55 @@ namespace PmHelper.Domain.Services.Users
             return user;
         }
 
-        public async Task<IUser> GetUserInfoAsync(string email)
+        public async Task<IUser?> GetUserById(int userId)
         {
-            _logger.LogInformation($"Get user information with email={email}");
+            _logger.LogInformation($"UserService::GetUserById: Get user by Id={userId}");
 
             try
             {
                 var dbUser = await _dbContext.Users
-                    .FirstOrDefaultAsync(u => u.Email == email);
+                    .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (dbUser == null)
                 {
-                    _logger.LogCritical($"User with email {email} is not found!");
-                    throw new UserException();
+                    _logger.LogWarning($"UserService::GetUserById: User with Id={userId} is not found.");
+                    return null;
                 }
-
-                _logger.LogInformation($"Found user with email {email}: {dbUser.FirstName} {dbUser.LastName}");
-                return new User(dbUser);
+                else
+                {
+                    _logger.LogInformation($"UserService::GetUserById: Found user {dbUser.Email} {dbUser.FirstName} {dbUser.LastName}");
+                    return new User(dbUser);
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"Exception raised {ex.Message}");
+                _logger.LogCritical($"UserService::GetUserById: Exception raised. Msg: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task DeleteUserAsync(string email)
+        public async Task DeleteUserAsync(int userId)
         {
-            _logger.LogInformation($"Delete user information with email={email}");
+            _logger.LogInformation($"UserService::DeleteUserAsync: Delete user with Id={userId}");
 
             try
             {
                 var dbUser = await _dbContext.Users
-                    .FirstOrDefaultAsync(u => u.Email == email);
+                    .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (dbUser == null)
                 {
-                    _logger.LogCritical($"User with email {email} is not found!");
+                    _logger.LogCritical($"UserService::DeleteUserAsync: User with Id={userId} is not found!");
                     throw new UserException();
                 }
 
-                _logger.LogWarning($"Removing user with email=\"{dbUser.Email}\" from database");
                 _dbContext.Remove(dbUser);
                 await _dbContext.SaveChangesAsync();
+                _logger.LogWarning($"UserService::DeleteUserAsync: Removed user with Id={userId} from database");
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"Exception raised {ex.Message}");
+                _logger.LogCritical($"UserService::DeleteUserAsync:: Exception raised. MSg: {ex.Message}");
                 throw;
             }
         }

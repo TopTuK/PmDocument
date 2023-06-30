@@ -21,15 +21,15 @@ namespace PmHelper.Domain.Services.Users
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="email"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        Task<IUser> GetUserInfoAsync(string email);
+        Task<IUser?> GetUserById(int userId);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="email"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        Task DeleteUserAsync(string email);
+        Task DeleteUserAsync(int userId);
     }
 }

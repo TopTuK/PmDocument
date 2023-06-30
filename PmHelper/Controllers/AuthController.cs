@@ -26,45 +26,6 @@ namespace PmHelper.Controllers
             _configuration = configuration;
         }
 
-        [AllowAnonymous]
-        public IActionResult Index()
-        {
-            return Content("Anonymous HELLO there!");
-        }
-
-        [Authorize]
-        public async Task<IActionResult> GetUserInfo()
-        {
-            var email = User.FindFirstValue("sub");
-
-            if (email != null)
-            {
-                var user = await _userService.GetUserInfoAsync(email);
-                return Ok(user);
-            }
-
-            return BadRequest();
-        }
-
-        [Authorize]
-        public IActionResult Secure()
-        {
-            var claims = User.Claims;
-
-            if ((claims != null) && (claims.Any()))
-            {
-                var jClaimes = new Dictionary<string, string>(claims.Count());
-                foreach (var c in claims) 
-                {
-                    jClaimes.Add(c.Type, c.Value);
-                }
-
-                return Ok(jClaimes);
-            }
-            
-            return Content($"No claims IsNull = {claims == null}");
-        }
-
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
@@ -113,9 +74,8 @@ namespace PmHelper.Controllers
 
                 var claims = new List<Claim>
                 {
-                    new("sub", user.Email),
-                    // new("firstname", user.FirstName),
-                    // new("lastname", user.LastName),
+                    new("sub", user.Id.ToString()),
+                    new("email", user.Email),
                 };
 
                 // Run user authentification login (First time seen?)

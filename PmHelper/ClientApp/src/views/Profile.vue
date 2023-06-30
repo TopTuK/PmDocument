@@ -16,14 +16,6 @@
             <div class="text-center mt-2 font-light text-sm">
                 {{ user.userInfo.email }}
             </div>
-            <!--
-            <div class="text-center font-normal text-lg">Kerala</div>
-            <div class="px-6 text-center mt-2 font-light text-sm">
-                <p>
-                    Front end Developer, avid reader. Love to take a long walk, swim
-                </p>
-            </div>
-            -->
 
             <hr class="mt-8" />
 
