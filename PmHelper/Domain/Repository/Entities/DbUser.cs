@@ -4,11 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PmHelper.Domain.Repository.Entities
 {
-    [Table("UserProfiles")]
+    [Table("UserProfile")]
     public class DbUser
     {
-        [Required]
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required]
         public string? Email { get; set; }
 
         [Required]

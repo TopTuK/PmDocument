@@ -11,12 +11,14 @@ namespace PmHelper.Domain.Services.Users
     {
         private record User : IUser
         {
+            public int Id { get; init; }
             public string FirstName { get; init; } = string.Empty;
             public string LastName { get; init; } = string.Empty;
             public string Email { get; init; } = string.Empty;
 
             public User(DbUser dbUser)
             {
+                Id = dbUser.Id;
                 Email = dbUser.Email!;
                 FirstName = dbUser.FirstName ?? "Anonymous";
                 LastName = dbUser.LastName ?? string.Empty;

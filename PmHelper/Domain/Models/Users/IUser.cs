@@ -5,6 +5,8 @@ namespace PmHelper.Domain.Models.Users
 {
     public interface IUser
     {
+        int Id { get; }
+
         string FirstName { get; }
         
         string LastName { get; }
