@@ -5,6 +5,7 @@ import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 import Documents from '@/views/Documents.vue'
 import Profile from '@/views/Profile.vue'
+import ProjectCharter from '@/views/documents/ProjectCharter.vue'
 
 const routes = [
     {
@@ -29,6 +30,14 @@ const routes = [
         component: Documents,
         meta: {
             title: "documents_title",
+        },
+    },
+    {
+        path: "/documents/charter",
+        name: "Charter",
+        component: ProjectCharter,
+        meta: {
+            title: "project_charter_title",
         },
     },
     {
