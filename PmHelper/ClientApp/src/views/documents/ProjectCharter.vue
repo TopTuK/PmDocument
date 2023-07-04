@@ -6,7 +6,7 @@
             </va-card-title>
 
             <va-card-content>
-                <div class="max-w-3xl">
+                <div class="prose xl:text-lg max-w-3xl">
                     <p>
                         Project Charter is a detailed document that outlines the goals, stakeholders, scope and other relevant information regarding a project.
                     </p>

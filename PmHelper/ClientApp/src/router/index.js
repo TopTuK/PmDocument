@@ -5,7 +5,12 @@ import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 import Documents from '@/views/Documents.vue'
 import Profile from '@/views/Profile.vue'
-import ProjectCharter from '@/views/documents/ProjectCharter.vue'
+
+const ProjectCharter = () => import('@/views/documents/ProjectCharter.vue')
+const AppRequirements = () => import('@/views/documents/AppRequirements.vue')
+const FeatureRequirements = () => import('@/views/documents/FeatureRequirements.vue')
+const UserStory = () => import('@/views/documents/UserStory.vue')
+//import ProjectCharter from '@/views/documents/ProjectCharter.vue'
 
 const routes = [
     {
@@ -38,6 +43,30 @@ const routes = [
         component: ProjectCharter,
         meta: {
             title: "project_charter_title",
+        },
+    },
+    {
+        path: "/documents/apprequirements",
+        name: "AppRequirements",
+        component: AppRequirements,
+        meta: {
+            title: "app_requirements_title",
+        },
+    },
+    {
+        path: "/documents/featurerequirements",
+        name: "FeatureRequirements",
+        component: FeatureRequirements,
+        meta: {
+            title: "feature_requirements_title",
+        },
+    },
+    {
+        path: "/documents/userstory",
+        name: "UserStory",
+        component: UserStory,
+        meta: {
+            title: "user_story_title",
         },
     },
     {

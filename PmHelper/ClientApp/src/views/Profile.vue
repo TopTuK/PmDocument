@@ -29,12 +29,14 @@
         </div>
 
         <div
+            class="flex items-center justify-center"
             v-else-if="user.error"
         >
             Error!
         </div>
 
         <div
+            class="flex items-center justify-center"
             v-else
         >
             Loading...
