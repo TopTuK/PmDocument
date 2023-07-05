@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express, { json, urlencoded } from "express";
 import { APP_NAME, VERSION, DEBUG, SERVER_PORT, COMPLETIONS_ROUTE, CHAT_COMPLETIONS_ROUTE } from "./config.js";
 

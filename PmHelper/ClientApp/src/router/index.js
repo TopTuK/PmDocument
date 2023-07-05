@@ -6,11 +6,11 @@ import Login from '@/views/Login.vue'
 import Documents from '@/views/Documents.vue'
 import Profile from '@/views/Profile.vue'
 
+// https://router.vuejs.org/guide/advanced/lazy-loading.html
 const ProjectCharter = () => import('@/views/documents/ProjectCharter.vue')
 const AppRequirements = () => import('@/views/documents/AppRequirements.vue')
 const FeatureRequirements = () => import('@/views/documents/FeatureRequirements.vue')
 const UserStory = () => import('@/views/documents/UserStory.vue')
-//import ProjectCharter from '@/views/documents/ProjectCharter.vue'
 
 const routes = [
     {
