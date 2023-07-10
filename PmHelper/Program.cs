@@ -123,6 +123,16 @@ internal class Program
                 options.SignInScheme = "temp";
             });
 
+        // Add polices
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("IsAdmin", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireClaim("isAdmin", "yes");
+            });
+        });
+
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>();
 

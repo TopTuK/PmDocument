@@ -28,6 +28,19 @@ namespace PmHelper.Controllers
 
         public async Task<IActionResult> Logout()
         {
+            _logger.LogInformation("AuthController::Logout: start logout");
+
+            // Get User Id
+            int userId;
+            if (!int.TryParse(User.FindFirstValue("sub"), out userId))
+            {
+                _logger.LogError("AuthController::Logout: User is not authenticated. Can't find user id");
+                return BadRequest("Not authenticated");
+            }
+
+            var user = await _userService.GetUserByIdAsync(userId);
+            _logger.LogInformation($"AuthController::Logout: {user?.Email}");
+
             await HttpContext.SignOutAsync();
 
             return LocalRedirect(new PathString("/"));
@@ -36,18 +49,18 @@ namespace PmHelper.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SinginCallback()
         {
-            _logger.LogInformation("Start authentication callback. Reading the outcome of external auth");
+            _logger.LogInformation("AuthController::SinginCallback: Start authentication callback. Reading the outcome of external auth");
 
             // Read the outcome of external auth
             var authResult = await HttpContext.AuthenticateAsync(_configuration["AuthTempCookieName"]);
 
             if (!authResult.Succeeded)
             {
-                _logger.LogError("Can't read the outcome of external authentication");
+                _logger.LogError("AuthController::SinginCallback: Can't read the outcome of external authentication");
                 return LocalRedirect(new PathString("/"));
             }
 
-            _logger.LogInformation("Authentication succeeded. Start reading claims and metadata");
+            _logger.LogInformation("AuthController::SinginCallback: Authentication succeeded. Start reading claims and metadata");
 
             // Read metadata with scheme
             var metadata = authResult.Properties.Items;
@@ -55,12 +68,12 @@ namespace PmHelper.Controllers
                 || (!metadata.ContainsKey("scheme"))
                 || (string.IsNullOrEmpty(metadata["scheme"])))
             {
-                _logger.LogError("Metadata doesn't contain scheme");
+                _logger.LogError("AuthController::SinginCallback: Metadata doesn't contain scheme");
                 return LocalRedirect(new PathString("/"));
             }
 
             var schemeName = metadata["scheme"]!;
-            _logger.LogInformation($"Authentication scheme name is \"{schemeName}\"");
+            _logger.LogInformation($"AuthController::SinginCallback: Authentication scheme name is \"{schemeName}\"");
 
             try
             {
@@ -70,7 +83,7 @@ namespace PmHelper.Controllers
                     metadata: metadata!
                 );
 
-                _logger.LogInformation($"Authenticated user: {user.Email} {user.FirstName} {user.LastName}");
+                _logger.LogInformation($"AuthController::SinginCallback: Authenticated user: {user.Email} {user.FirstName} {user.LastName}");
 
                 var claims = new List<Claim>
                 {
@@ -86,14 +99,14 @@ namespace PmHelper.Controllers
                 await HttpContext.SignInAsync(cp);
                 await HttpContext.SignOutAsync("temp");
 
-                _logger.LogInformation("Success SignIn user");
+                _logger.LogInformation("AuthController::SinginCallback: Success SignIn user");
 
                 // return LocalRedirect(new PathString("/auth/secure"));
                 return LocalRedirect(new PathString("/profile"));
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, "Can't authentificate user");
+                _logger.LogCritical(ex, "AuthController::SinginCallback: Can't authentificate user");
                 return LocalRedirect(new PathString("/"));
             }
         }
@@ -101,13 +114,13 @@ namespace PmHelper.Controllers
         [HttpGet]
         public IActionResult SignInGoogle()
         {
-            _logger.LogInformation("Start SignInGoogle authentication");
+            _logger.LogInformation("AuthController::SignInGoogle: Start SignInGoogle authentication");
 
             var schemeName = _configuration["GoogleAuth:Name"];
 
             if (schemeName == null)
             {
-                _logger.LogError("SignInGoogle: scheme name is null");
+                _logger.LogError("AuthController::SignInGoogle: scheme name is null");
                 return BadRequest("Scheme name is null");
             }
 
@@ -120,20 +133,20 @@ namespace PmHelper.Controllers
                 }
             };
 
-            _logger.LogInformation($"Start Google challenge with Scheme name: {schemeName}");
+            _logger.LogInformation($"AuthController::SignInGoogle: Start Google challenge with Scheme name {schemeName}");
             return Challenge(props, schemeName);
         }
 
         [HttpGet]
         public IActionResult SignInOidc()
         {
-            _logger.LogInformation("Start SignInOidc authentication");
+            _logger.LogInformation("AuthController::SignInOidc: Start SignInOidc authentication");
 
             var schemeName = _configuration["OidcAuth:Name"];
             
             if (schemeName == null)
             {
-                _logger.LogError("SignInOidc: scheme name is null");
+                _logger.LogError("AuthController::SignInOidc: scheme name is null");
                 return BadRequest("Scheme name is null");
             }
 

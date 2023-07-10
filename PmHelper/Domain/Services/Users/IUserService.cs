@@ -23,7 +23,7 @@ namespace PmHelper.Domain.Services.Users
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<IUser?> GetUserById(int userId);
+        Task<IUser?> GetUserByIdAsync(int userId);
 
         /// <summary>
         /// 

@@ -18,8 +18,12 @@
             </div>
 
             <div class="flex justify-center mt-2 items-center gap-3 p-2">
-                <va-button color="danger">Remove profile</va-button>
-                <va-button color="warning">Log out</va-button>
+                <va-button
+                    color="warning"
+                    href="/auth/logout"
+                >
+                    Log out
+                </va-button>
             </div>
         </va-card-content>
     </va-card>

@@ -18,5 +18,7 @@ namespace PmHelper.Domain.Repository.Entities
         public string? FirstName { get; set; }
         [Required]
         public string? LastName { get; set; }
+
+        public int DocumentsCount { get; set; } = 3;
     }
 }

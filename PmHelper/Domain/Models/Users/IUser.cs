@@ -13,5 +13,7 @@ namespace PmHelper.Domain.Models.Users
         
         [EmailAddress]
         string Email { get; }
+
+        bool IsAdmin { get => false; }
     }
 }

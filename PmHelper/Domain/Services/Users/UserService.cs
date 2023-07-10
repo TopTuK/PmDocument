@@ -183,7 +183,7 @@ namespace PmHelper.Domain.Services.Users
             return user;
         }
 
-        public async Task<IUser?> GetUserById(int userId)
+        public async Task<IUser?> GetUserByIdAsync(int userId)
         {
             _logger.LogInformation($"UserService::GetUserById: Get user by Id={userId}");
 

@@ -5,6 +5,8 @@ using System.Xml.Linq;
 
 /*
  * https://jasonwatmore.com/post/2022/09/05/net-6-connect-to-sqlite-database-with-entity-framework-core
+ * dotnet ef migrations add InitialCreate
+ * dotnet ef database update
 */
 
 namespace PmHelper.Domain.Repository

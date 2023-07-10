@@ -30,7 +30,7 @@ namespace PmHelper.Controllers
                 return BadRequest("Not authenticated");
             }
 
-            var user = await _userService.GetUserById(userId);
+            var user = await _userService.GetUserByIdAsync(userId);
             if (user == null)
             {
                 _logger.LogError($"UserController::GetUserInfo: user with Id={userId} is not found");
@@ -41,7 +41,8 @@ namespace PmHelper.Controllers
             return new JsonResult(user);
         }
 
-        public async Task<IActionResult> DeleteUser()
+        [Authorize(Policy = "IsAdmin")]
+        public async Task<IActionResult> DeleteUser(int uid)
         {
             // Get User Id
             int userId = -1;
@@ -51,13 +52,20 @@ namespace PmHelper.Controllers
                 return BadRequest("Not authenticated");
             }
 
+            var user = await _userService.GetUserByIdAsync(userId);
+            if ((user != null) && !user.IsAdmin)
+            {
+                _logger.LogError("UserController::DeleteUser: user is not admin");
+                return BadRequest("The user is not administrator");
+            }
+
             try
             {
-                _logger.LogInformation($"UserController::DeleteUser: removing user with Id={userId}");
-                await _userService.DeleteUserAsync(userId);
+                _logger.LogInformation($"UserController::DeleteUser: removing user with Id={uid}");
+                await _userService.DeleteUserAsync(uid);
 
                 await HttpContext.SignOutAsync();
-                return Ok(userId);
+                return Ok(uid);
             }
             catch (Exception ex)
             {
