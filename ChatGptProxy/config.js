@@ -17,6 +17,7 @@ export const COMPLETIONS_URL = "https://api.openai.com/v1/completions";
 export const CHAT_COMPLETIONS_URL = "https://api.openai.com/v1/chat/completions";
 
 // Whitelisted IPs
+export const USE_WHITELISTED_IPS = true;
 export const WHITELISTED_IPS = [
     "127.0.0.1",
     "::1",

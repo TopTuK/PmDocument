@@ -1,4 +1,4 @@
-import { WHITELISTED_IPS, RATE_LIMIT, RATE_PERIOD, DEBUG } from '../config.js';
+import { USE_WHITELISTED_IPS, WHITELISTED_IPS, RATE_LIMIT, RATE_PERIOD, DEBUG } from '../config.js';
 
 const rateLimit = new Map();
 
@@ -12,8 +12,8 @@ async function rateLimitMiddleware(req, res, next) {
     if (DEBUG) {
         console.log(`Client request from ${ip}`);
     }
-    
-    if (!WHITELISTED_IPS.includes(ip)) {
+
+    if ((USE_WHITELISTED_IPS) && (!WHITELISTED_IPS.includes(ip))) {
         console.warn(`Whitelist of ip adresses doesn\'t containt ${ip}. Return bad request.`);
 
         return res.status(429).send({

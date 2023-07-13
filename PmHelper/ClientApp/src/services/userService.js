@@ -19,13 +19,16 @@ export default function useUserService() {
 
             // Check for bad request status
             if (response.status !== 200) {
-                userState.loading = false;
                 userState.error = true;
+                userState.userInfo = {};
+            }
+            else {
+                userState.userInfo = response.data; // Setting user info
             }
 
-            userState.userInfo = response.data; // Setting user info
             userState.loading = false; // Setting loading state to false
-        } catch (error) {
+        } 
+        catch (error) {
             userState.loading = false; // Setting loading state to false in case of error
             userState.error = true;
             throw error;

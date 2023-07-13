@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  chatgptproxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chat-gpt-proxy
+    restart: always
+    ports:
+      - 80:3000
+
+networks:
+  default:
+    name: pmi_network

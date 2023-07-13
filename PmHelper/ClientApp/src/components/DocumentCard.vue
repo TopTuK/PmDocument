@@ -5,7 +5,7 @@
         :href="doc.url"
     >
         <va-card-title>
-            {{ doc.title }}
+            {{ $t(`documents_types.${doc.title}`) }}
         </va-card-title>
         <va-card-content>
             <img 
@@ -15,7 +15,7 @@
             />
 
             <p class="mt-4">
-                {{ doc.text }}
+                {{ $t(`documents_types.${doc.text}`) }}
             </p>
         </va-card-content>
     </va-card>

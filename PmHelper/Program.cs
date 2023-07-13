@@ -11,7 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using PmHelper.Domain.Repository;
+using PmHelper.Domain.Services.Documents;
 using PmHelper.Domain.Services.Users;
+using PmHelper.Middlewares;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -38,6 +40,7 @@ internal class Program
     private static void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IDocumentService, DocumentService>();
     }
 
     private static void Main(string[] args)
@@ -157,6 +160,10 @@ internal class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseMiddleware<UserIdMiddleware>();
+
+        // Use exception middleware
+        //app.UseExceptionHandler("");
 
 #pragma warning disable ASP0014 // Suggest using top level route registrations
         app.UseEndpoints(endpoints =>

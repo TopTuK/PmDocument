@@ -23,12 +23,14 @@ namespace PmHelper.Controllers
         public async Task<IActionResult> GetUserInfo()
         {
             // Get User Id
-            int userId = -1;
+            var userId = (int)HttpContext.Items["userId"]!;
+
+            /*int userId = -1;
             if (!int.TryParse(User.FindFirstValue("sub"), out userId))
             {
                 _logger.LogError("UserController::GetUserInfo: User is not authenticated. Can't find user id");
                 return BadRequest("Not authenticated");
-            }
+            }*/
 
             var user = await _userService.GetUserByIdAsync(userId);
             if (user == null)
@@ -45,12 +47,7 @@ namespace PmHelper.Controllers
         public async Task<IActionResult> DeleteUser(int uid)
         {
             // Get User Id
-            int userId = -1;
-            if (!int.TryParse(User.FindFirstValue("sub"), out userId))
-            {
-                _logger.LogError("UserController::DeleteUser: User is not authenticated. Can't find user id");
-                return BadRequest("Not authenticated");
-            }
+            var userId = (int)HttpContext.Items["userId"]!;
 
             var user = await _userService.GetUserByIdAsync(userId);
             if ((user != null) && !user.IsAdmin)

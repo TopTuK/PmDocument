@@ -11,10 +11,8 @@ namespace PmHelper.Domain.Repository.Entities
         public int Id { get; set; }
 
         [Required]
-        public string? Title { get; set; }
+        public string? Name { get; set; }
 
-        [Required]
-        public string? Description { get; set; }
 
         [Required]
         public string? Prompt { get; set; }

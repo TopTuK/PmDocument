@@ -1,20 +1,20 @@
 <template>
     <div class="flex flex-col">
-        <!--<h1 class="text-3xl font-medium">HELLO WORLD!</h1>-->
+        
         <div class="container mx-auto pt-12">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                 <article class="prose text-lg max-w-none">
                     <h1 class="text-4l md:text-5xl">
-                        Generate documentation with help of AI
+                        {{ $t('home.title') }}
                     </h1>
 
                     <div class="max-w-3xl">
                         <p>
-                            Stop wasting time writing documentation from scratch.
-                            <b>Let the AI help you!</b>
+                            {{ $t('home.description') }}
+                            <b>{{ $t('home.slogan') }}</b>
                         </p>
                         <p>
-                            <b>PM Document</b> will help you to leverage the power of ChatGPT to save time and money
+                            <b>{{ $t('common.app_name') }}</b> {{ $t('home.app_description') }}
                         </p>
                     </div>
                 </article>
@@ -28,6 +28,9 @@
         </div>
     </div>
 </template>
+
+<script setup>
+</script>
 
 <style scoped>
 .mockup-window {

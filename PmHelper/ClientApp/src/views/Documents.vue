@@ -13,10 +13,14 @@
                 stripe
                 stripe-color="success"
             >
-                <va-card-title>Can't find the desired document?</va-card-title>
+            
+                <va-card-title>
+                    {{ $t('documents.new_document_title') }}
+                </va-card-title>
+
                 <va-card-content>
                     <p>
-                        Tell us which document you want to generate, and we will do our best to create it 👇
+                        {{ $t('documents.new_document_description') }}
                     </p>
 
                     <div
@@ -24,7 +28,7 @@
                         class="mt-6 flex flex-col items-center justify-center"
                     >
                         <va-button preset="primary">
-                            Tell us more
+                            {{ $t('documents.new_document_button_title') }}
                         </va-button>
                     </div>
 
@@ -32,8 +36,11 @@
                         class="mt-6 flex flex-col items-center justify-center"
                         v-else
                     >
-                        <va-button preset="primary">
-                            Sign In
+                        <va-button 
+                            preset="primary"
+                            to="/login"
+                        >
+                            {{ $t('common.signin_button_title') }}
                         </va-button>
                     </div>
                 </va-card-content>
