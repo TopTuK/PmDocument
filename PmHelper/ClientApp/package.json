@@ -15,6 +15,7 @@
     "vue": "^3.2.47",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.2",
+    "vue3-form-wizard": "^0.2.1",
     "vuestic-ui": "^1.6.5"
   },
   "devDependencies": {

@@ -4,7 +4,11 @@
             <router-link
                 to="/"
                 class="no-underline hover:text-white hover:no-underline">
-                <span class="text-2xl pl-2">PM Helper</span>
+                
+                <span class="text-2xl pl-2">
+                    {{ $t('common.app_name') }}
+                </span>
+
             </router-link>
         </div>
 
@@ -14,24 +18,35 @@
                     to="/documents"
                     class="items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
-                    Documents
+                    {{ $t('common.document_button_title') }}
                 </router-link>
             </div>
 
-            <div>
+            <div 
+                v-if="isAuthenticated"
+                class="flex gap-5"
+            >
                 <router-link
-                    v-if="!isAuthenticated"
-                    to="/login"
-                    class="items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                >
-                    Sign In
-                </router-link>
-                <router-link
-                    v-else
                     to="/profile"
                     class="items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
-                    Profile
+                    {{ $t('common.profile_button_title') }}
+                </router-link>
+
+                <va-button
+                    color="warning"
+                    href="/auth/logout"
+                >
+                    {{ $t('common.logout_button_title') }}
+                </va-button>
+            </div>
+
+            <div v-else>
+                <router-link
+                    to="/login"
+                    class="items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                >
+                    {{ $t('common.signin_button_title') }}
                 </router-link>
             </div>
         </div>

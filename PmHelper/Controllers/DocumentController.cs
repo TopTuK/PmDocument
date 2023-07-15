@@ -33,8 +33,8 @@ namespace PmHelper.Controllers
             );
             var userDocuments = await _documentService.GetUserDocumentsAsync(userId);
             _logger.LogInformation(
-                message: "DocumentController::GetCurrentUserDocuments: got {} documents",
-                userDocuments.Count()
+                message: "DocumentController::GetCurrentUserDocuments: got {} documents for user {}",
+                userDocuments.Count(), userId
             );
 
             return new JsonResult(userDocuments);

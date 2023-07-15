@@ -1,39 +1,61 @@
 import axios from 'axios';
 import { reactive } from 'vue';
+import { DEBUG  } from '@/config';
 
 export default function useDocumentService() {
-    // Creating reactive object to hold documents types and loading state
-    const documentsTypesState = reactive({
-        documentsTypes: [],
+    const GET_USER_DOCUMENTS_ACTION = "/document/GetCurrentUserDocuments";
+
+    // Creating reactive object to hold user documents and loading state
+    const userDocuments = reactive({
+        documents: [],
         loading: false,
         error: false,
     });
 
-    // Get Documents Types
-    async function getDocumentsTypes() {
-        try {
-            documentsTypesState.error = false;
-            documentsTypesState.loading = true;
+    // Get user documents
+    async function getUserDocuments() {
+        if (DEBUG) {
+            console.log("DocumentService::getUserDocuments: start getting current user documents");
+        }
 
-            const response = await axios.get('/documents/getdocumentstypes');
+        try {
+            userDocuments.error = false;
+            userDocuments.loading = true;
+
+            var response = await axios.get(GET_USER_DOCUMENTS_ACTION);
+
+            if (DEBUG) {
+                console.log(`DocumentService::getUserDocuments: got response with status=${response.status}`);
+            }
+
+            // Check for bad request status
             if (response.status !== 200) {
-                documentsTypesState.error = true;
+                console.log("DocumentService::getUserDocuments: ERROR: can't get user docuemnts");
+
+                userDocuments.error = true;
+                userDocuments.documents = [];
             }
             else {
-                documentsTypesState.documentsTypes = response.data;
+                if (DEBUG) {
+                    console.log("DocumentService::getUserDocuments: userDocuments=", response.data);
+                }
+
+                userDocuments.documents = response.data;
             }
 
-            documentsTypesState.loading = false;
+            userDocuments.loading = false;
         }
         catch (error) {
-            documentsTypesState.loading = false;
-            documentsTypesState.error = true;
+            console.log("DocumentService::getUserDocuments: EXCEPTION: ", error);
+
+            userDocuments.error = true;
+            userDocuments.loading = false;
 
             throw error;
         }
     }
 
     return {
-        documentsTypesState, getDocumentsTypes,
+        userDocuments, getUserDocuments,
     }
 }

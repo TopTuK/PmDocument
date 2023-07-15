@@ -31,7 +31,7 @@ namespace PmHelper.Controllers
                 _logger.LogError("UserController::GetUserInfo: User is not authenticated. Can't find user id");
                 return BadRequest("Not authenticated");
             }*/
-
+            _logger.LogInformation($"UserController::GetUserInfo: get user information. Id={userId}");
             var user = await _userService.GetUserByIdAsync(userId);
             if (user == null)
             {

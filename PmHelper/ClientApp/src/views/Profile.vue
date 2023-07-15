@@ -4,28 +4,10 @@
             class="p-4 grid shrink gap-4 lg:grid-cols-3 grid-cols-2"
             v-if="!user.error && !user.loading"
         >
-            <!-- Profile card -->
+            <!-- User Profile card -->
             <ProfileCard :userInfo="user.userInfo" />
-
-            <va-card
-                square
-                outlined
-            >
-                <va-card-title>
-                    Add new document
-                </va-card-title>
-
-                <va-card-content>
-                    <img 
-                        class="w-32 mx-auto rounded-full border-8 border-white" 
-                        src="@/assets/images/add_document.png"
-                        alt="" 
-                    />
-                    <div class="text-center text-3xl font-medium">
-                        Create document
-                    </div>
-                </va-card-content>
-            </va-card>
+            <!-- Create document card -->
+            <CreateDocumentCard />
         </div>
 
         <div
@@ -47,14 +29,20 @@
 <script setup>
 import { onBeforeMount } from 'vue';
 import useUserService from "@/services/userService.js";
+import useDocumentService from '@/services/documentService.js';
 import ProfileCard from '@/components/ProfileCard.vue';
+import CreateDocumentCard from '@/components/CreateDocumentCard.vue';
 
 const userService = useUserService();
 const user = userService.userState;
 
+const documentService = useDocumentService();
+const userDocuments = documentService.userDocuments;
+
 onBeforeMount(async () => {
     try {
         await userService.getUserInfo();
+        await documentService.getUserDocuments();
     } catch (error) {
         console.error(error);
     }

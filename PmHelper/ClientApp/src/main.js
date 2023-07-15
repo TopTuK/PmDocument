@@ -2,6 +2,8 @@ import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 import { createVuestic } from 'vuestic-ui';
 import axios from 'axios';
+import VueFormWizard from 'vue3-form-wizard';
+import 'vue3-form-wizard/dist/style.css'
 
 import router from "@/router/index.js";
 
@@ -34,6 +36,9 @@ app.use(i18n);
 
 // use vuestic
 app.use(createVuestic());
+
+// use VueFormWizard
+app.use(VueFormWizard);
 
 // Mount app
 app.mount('#app');

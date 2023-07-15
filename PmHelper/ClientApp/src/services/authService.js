@@ -1,10 +1,9 @@
 import Cookies from 'js-cookie';
+import { COOKIE_NAME } from '@/config';
 
 function useAuthService() {
-    const appCookieName = "pmdoc_access";
-
     function isAuthenticated() {
-        const cookie = Cookies.get(appCookieName);
+        const cookie = Cookies.get(COOKIE_NAME);
 
         return Boolean(cookie);
     }

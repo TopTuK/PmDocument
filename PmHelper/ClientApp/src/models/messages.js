@@ -6,6 +6,9 @@ const messages = {
         common: {
             app_name: "PM Document",
             signin_button_title: "Sign In",
+            profile_button_title: "Profile",
+            logout_button_title: "Log out",
+            document_button_title: "Documents",
         },
         home: {
             title: "Generate documentation with help of AI",
@@ -17,6 +20,8 @@ const messages = {
             new_document_title: "Can't find the desired document?",
             new_document_description: "Tell us which document you want to generate, and we will do our best to create it 👇",
             new_document_button_title: "Tell us more",
+            create_document_card_title: "New document",
+            create_document_button_title: "Create document",
         },
         documents_types: {
             charter_title: "Project Charter",

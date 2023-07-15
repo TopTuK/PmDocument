@@ -22,7 +22,7 @@
                     color="warning"
                     href="/auth/logout"
                 >
-                    Log out
+                    {{ $t('common.logout_button_title') }}
                 </va-button>
             </div>
         </va-card-content>
