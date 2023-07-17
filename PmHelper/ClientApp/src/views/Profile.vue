@@ -8,6 +8,9 @@
             <ProfileCard :userInfo="user.userInfo" />
             <!-- Create document card -->
             <CreateDocumentCard />
+
+            <!-- User Documents -->
+            <UserDocumentsCards />
         </div>
 
         <div
@@ -29,20 +32,16 @@
 <script setup>
 import { onBeforeMount } from 'vue';
 import useUserService from "@/services/userService.js";
-import useDocumentService from '@/services/documentService.js';
 import ProfileCard from '@/components/ProfileCard.vue';
 import CreateDocumentCard from '@/components/CreateDocumentCard.vue';
+import UserDocumentsCards from '@/components/UserDocumentsCards.vue';
 
 const userService = useUserService();
 const user = userService.userState;
 
-const documentService = useDocumentService();
-const userDocuments = documentService.userDocuments;
-
 onBeforeMount(async () => {
     try {
         await userService.getUserInfo();
-        await documentService.getUserDocuments();
     } catch (error) {
         console.error(error);
     }

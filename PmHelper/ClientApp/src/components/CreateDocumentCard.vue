@@ -29,6 +29,12 @@
                     gradient
                     size="large"
                     class="mt-6"
+                    :to="{
+                        name: 'CreateDocument',
+                        params: {
+                            type_id: document_value.id
+                        }
+                    }"
                 >
                     {{ $t('documents.create_document_button_title') }}
                 </va-button>

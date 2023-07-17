@@ -5,6 +5,7 @@
             <DocumentCard
                 v-for="doc in document_types"
                 :doc="doc"
+                :canCreate="isAuthicated"
             />
 
             <!--TO DO CARD-->

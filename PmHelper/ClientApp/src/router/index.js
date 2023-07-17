@@ -12,6 +12,8 @@ const AppRequirements = () => import('@/views/documents/AppRequirements.vue')
 const FeatureRequirements = () => import('@/views/documents/FeatureRequirements.vue')
 const UserStory = () => import('@/views/documents/UserStory.vue')
 
+const CreateDocument = () => import('@/views/CreateDocument.vue')
+
 const routes = [
     {
         path: "/",
@@ -70,6 +72,16 @@ const routes = [
         },
     },
     {
+        path: "/documents/create/:type_id",
+        name: "CreateDocument",
+        props: true,
+        component: CreateDocument,
+        meta: {
+            title: "create_document_title",
+            requiresAuth: true,
+        },
+    },
+    {
         path: "/profile",
         name: "Profile",
         component: Profile,
@@ -92,7 +104,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-    console.log(`Router befoareach: ${from.name} -> ${to.name} (${to.meta.requiresAuth})`);
+    console.log(`Router beforeach: ${from.name} -> ${to.name} (${to.meta.requiresAuth})`);
 
     if (to.meta.requiresAuth) {
         try {
