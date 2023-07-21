@@ -11,9 +11,10 @@ async function rateLimitMiddleware(req, res, next) {
     
     if (DEBUG) {
         console.log(`Client request from ${ip}`);
+        console.log(`Use whitelist ip ${USE_WHITELISTED_IPS}`);
     }
 
-    if ((USE_WHITELISTED_IPS) && (!WHITELISTED_IPS.includes(ip))) {
+    if ((true === USE_WHITELISTED_IPS) && (!WHITELISTED_IPS.includes(ip))) {
         console.warn(`Whitelist of ip adresses doesn\'t containt ${ip}. Return bad request.`);
 
         return res.status(429).send({
