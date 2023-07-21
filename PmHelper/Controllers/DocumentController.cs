@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PmHelper.Domain.Models.Requests;
 using PmHelper.Domain.Services.Documents;
 
 namespace PmHelper.Controllers
@@ -38,6 +39,18 @@ namespace PmHelper.Controllers
             );
 
             return new JsonResult(userDocuments);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateDocument([FromBody] GenerateDocumentInfo documentRequest)
+        {
+            _logger.LogInformation("DocumentController::GenerateDocument: start generate document. Document type={}",
+                documentRequest.Id);
+
+            var userId = (int)HttpContext.Items["userId"]!;
+            _logger.LogInformation("DocumentController::GenerateDocument: userId={}", userId);
+
+            throw new NotImplementedException();
         }
     }
 }

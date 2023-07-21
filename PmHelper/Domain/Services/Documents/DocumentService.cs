@@ -34,5 +34,14 @@ namespace PmHelper.Domain.Services.Documents
             );
             return userDocuments;
         }
+
+        public async Task GenerateUserDocument(int userId, int documentType, string textRequest)
+        {
+            _logger.LogInformation(
+                "DocumentService::GenerateUserDocument: start generate document for user={}. DocumentType={}",
+                userId, documentType
+            );
+            throw new NotImplementedException();
+        }
     }
 }

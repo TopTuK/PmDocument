@@ -271,4 +271,9 @@ __pycache__/
 # Cake - Uncomment if you are using it
 # tools/
 
+# Local database
+*.db
+*.db-shm
+*.db-wal
+
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore

@@ -24,6 +24,8 @@ const messages = {
             create_document_button_title: "Create document",
         },
         documents_types: {
+            document_type_title: "Document type",
+
             charter_title: "Project Charter",
             charter_description: "Project Charter is a detailed document that outlines the goals, stakeholders, scope and other relevant information regarding a project.",
             charter_detailed_description: "<p>Project Charter is a detailed document that outlines the goals, stakeholders, scope and other relevant information regarding a project.</p><p>It describes the project deliverables, what the team intends to achieve, and how they plan to achieve it. The document sets the expectations for the project, clarifies the project requirements, and serves as a reference for all stakeholders involved in the project. It is a critical document that guides the project from beginning to end and ensures that the project team stays on track.</p>",

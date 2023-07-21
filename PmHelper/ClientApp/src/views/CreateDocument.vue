@@ -6,26 +6,18 @@
                 color="#dd9c1d"
                 step-size="md"
             >
-                <TabContent title="Document type">
-                    <va-card
-                        color="primary"
-                        gradient
-                    >
-                        <va-card-title>
-                            {{ $t(`documents_types.${document.title}`) }}
-                        </va-card-title>
-
-                        <va-card-content>
-                            <p class="mt-4">
-                                {{ $t(`documents_types.${document.text}`) }}
-                            </p>
-                        </va-card-content>
-                    </va-card>
+                <TabContent :title="$t('documents_types.document_type_title')">
+                    <section class="prose max-w-none">
+                        <h2 class="text-3xl mt-8">{{ $t(`documents_types.${document.title}`) }}</h2>
+                        <div class="my-8">
+                            <p>{{ $t(`documents_types.${document.text}`) }}</p>
+                        </div>
+                    </section>
                 </TabContent>
 
                 <TabContent title="Generate document">
                     <section class="prose max-w-none">
-                        <h2 class="text-3xl mt-8">Generate Project Charter</h2>
+                        <h2 class="text-3xl mt-8">Generate {{ $t(`documents_types.${document.title}`) }}</h2>
                         <div class="my-8">
                             <p><b>What do you need Project Charter for?</b></p>
                             <textarea placeholder="Describe your project or idea with a few words..." class="textarea textarea-bordered textarea-lg w-full max-w-2xl h-36"></textarea>

@@ -1,14 +1,12 @@
 version: '3.8'
 
 services:
-  sidorov-web:
-    # image: ghcr.io/toptuk/sidorov_ru:latest
+  chatgptproxy:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: chat-gpt-proxy
+    env_file: .env
     restart: always
-
-networks:
-  default:
-    name: pmi_network
+    ports:
+      - 80:3000
