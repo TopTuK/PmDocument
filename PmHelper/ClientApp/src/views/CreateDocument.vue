@@ -7,20 +7,22 @@
                 step-size="md"
             >
                 <TabContent :title="$t('documents_types.document_type_title')">
-                    <section class="prose max-w-none">
-                        <h2 class="text-3xl mt-8">{{ $t(`documents_types.${document.title}`) }}</h2>
+                    <section class="prose max-w-none h-72">
+                        <h2 class="text-3xl mt-6">{{ $t(`documents_types.${document.title}`) }}</h2>
                         <div class="my-8">
                             <p>{{ $t(`documents_types.${document.text}`) }}</p>
                         </div>
                     </section>
                 </TabContent>
 
-                <TabContent title="Generate document">
-                    <section class="prose max-w-none">
-                        <h2 class="text-3xl mt-8">Generate {{ $t(`documents_types.${document.title}`) }}</h2>
+                <TabContent :title="$t('documents_types.document_generate_title')">
+                    <section class="prose max-w-none h-72">
+                        <h2 class="text-3xl mt-6">{{ $t(`documents_types.${document.create_title}`) }}</h2>
                         <div class="my-8">
-                            <p><b>What do you need Project Charter for?</b></p>
-                            <textarea placeholder="Describe your project or idea with a few words..." class="textarea textarea-bordered textarea-lg w-full max-w-2xl h-36"></textarea>
+                            <p><b>{{ $t(`documents_types.${document.create_descrciption}`) }}</b></p>
+                            <textarea
+                                :placeholder="$t(`documents_types.${document.create_placeholder}`)"
+                                class="textarea textarea-bordered textarea-lg w-full max-w-2xl h-36" />
                         </div>
                     </section>
                 </TabContent>

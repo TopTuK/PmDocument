@@ -5,6 +5,9 @@ export default [
         title: "charter_title",
         image: "src/assets/images/documents/project-charter.webp",
         text: "charter_description",
+        create_title: "charter_create_title",
+        create_descrciption: "charter_create_description",
+        create_placeholder: "charter_create_placeholder",
     },
     {
         id: 2,
@@ -12,6 +15,9 @@ export default [
         title: "app_requirements_title",
         image: "src/assets/images/documents/app-req.webp",
         text: "app_requirements_description",
+        create_title: "app_requirements_create_title",
+        create_descrciption: "app_requirements_create_description",
+        create_placeholder: "app_requirements_create_placeholder",
     },
     {
         id: 3,
@@ -19,6 +25,9 @@ export default [
         title: "feature_requirements_title",
         image: "src/assets/images/documents/feature-req.webp",
         text: "feature_requirements_description",
+        create_title: "feature_requirements_create_title",
+        create_descrciption: "feature_requirements_create_description",
+        create_placeholder: "feature_requirements_create_placeholder",
     },
     {
         id: 4,
@@ -27,5 +36,8 @@ export default [
         image: "src/assets/images/documents/user-story.png",
         text: "user_story_description",
         cls: "object-cover mt-2 h-48 bg-base-100",
+        create_title: "user_story_create_title",
+        create_descrciption: "user_story_create_description",
+        create_placeholder: "user_story_create_placeholder",
     },
 ];
