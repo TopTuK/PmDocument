@@ -1,9 +1,11 @@
+import { toBoolean } from "./utils.js";
+
 // Set app name and version
 export const APP_NAME = "SChatGpt Proxy";
-export const VERSION = "0.9.5";
+export const VERSION = "0.9.9";
 
 // SET DEBUG
-export const DEBUG = process.env.DEBUG_MODE; // Debug mode
+export const DEBUG = toBoolean(process.env.DEBUG_MODE); // Debug mode
 
 // Server configuration
 export const SERVER_PORT = process.env.SERVER_PORT; // Server port
@@ -17,7 +19,7 @@ export const COMPLETIONS_URL = "https://api.openai.com/v1/completions";
 export const CHAT_COMPLETIONS_URL = "https://api.openai.com/v1/chat/completions";
 
 // Whitelisted IPs
-export const USE_WHITELISTED_IPS = process.env.USE_WHITELISTED_IPS;
+export const USE_WHITELISTED_IPS = toBoolean(process.env.USE_WHITELISTED_IPS);
 export const WHITELISTED_IPS = process.env.WHITELISTED_IPS.split(',');
 /*export const WHITELISTED_IPS = [
     "127.0.0.1",
@@ -25,7 +27,7 @@ export const WHITELISTED_IPS = process.env.WHITELISTED_IPS.split(',');
 ];*/
 
 // Prompt Moderation before sending to OpenAI
-export const MODERATION = process.env.MODERATION; // Moderation mode
+export const MODERATION = toBoolean(process.env.MODERATION); // Moderation mode
 
 // OpenAI API Keys
 export let OPENAI_KEY = process.env.OPENAI_KEY;

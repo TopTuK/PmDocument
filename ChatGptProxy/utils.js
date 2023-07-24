@@ -1,5 +1,24 @@
 import { OPENAI_KEY, OPENAI_KEYS } from "./config.js";
 
+function toBoolean(value) {
+    const bools = ["true", "yes", "y"];
+
+    value = value.toString();
+    value = value.trim();
+    value = value.toLowerCase();
+
+    // Empty string is considered a falsy value
+    if (!value.length) {
+        return false;
+    }
+    else if (!isNaN(Number(value))) {
+        return value > 0; // Any number above zero is considered a truthy value
+    }
+    else {
+        return bools.indexOf(value) >= 0; // Any value not marked as a truthy value is automatically falsy
+    }
+}
+
 async function* chunksToLines(chunksAsync) {
     let previous = "";
 
@@ -44,9 +63,9 @@ function generateId() {
 }
 
 function getOpenAIKey(mainKey) {
-    return (true === mainKey)
+    return (mainKey)
         ? OPENAI_KEY
         : OPENAI_KEYS[Math.floor(Math.random() * OPENAI_KEYS.length)];
 }
 
-export { generateId, getOpenAIKey, streamCompletion }
+export { toBoolean, generateId, getOpenAIKey, streamCompletion }

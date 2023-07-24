@@ -5,11 +5,15 @@ import { DEBUG, MODERATION, CHAT_COMPLETIONS_URL } from "../config.js";
 import { streamCompletion, generateId, getOpenAIKey } from "../utils.js";
 
 async function chatCompletions(req, res) {
+    if (DEBUG) {
+        console.log("Start Chat Completions");
+    }
+
     let key = getOpenAIKey(DEBUG); // Get OpenAI Key
     let orgId = generateId(); // Generate organistation ID
 
     if (DEBUG) {
-        console.log(`ChatGPT Key: ${key}`);
+        console.log(`ChatGPT Key: ${key} DEBUG: ${DEBUG}`);
         console.log(`ChatGPT Org name: ${orgId}`);
         console.log(`Moderation: ${MODERATION}`);
     }
@@ -179,7 +183,7 @@ async function chatCompletions(req, res) {
             );
 
             if (DEBUG) {
-                console.log(`Got respose from OpenAI: ${response.data}`);
+                console.log(`Got respose from OpenAI -> Proxing`);
             }
 
             delete response.data.id;

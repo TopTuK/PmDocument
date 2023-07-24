@@ -41,6 +41,9 @@ namespace PmHelper.Domain.Services.Documents
                 "DocumentService::GenerateUserDocument: start generate document for user={}. DocumentType={}",
                 userId, documentType
             );
+
+
+
             throw new NotImplementedException();
         }
     }
