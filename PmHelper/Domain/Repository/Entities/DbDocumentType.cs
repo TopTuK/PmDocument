@@ -11,14 +11,14 @@ namespace PmHelper.Domain.Repository.Entities
         public int Id { get; set; }
 
         [Required]
-        public string? Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
 
         [Required]
-        public string? Prompt { get; set; }
+        public string Prompt { get; set; } = string.Empty;
 
         [Required]
-        public string? AssistantName { get; set; }
+        public string AssistantName { get; set; } = string.Empty;
 
         [Required]
         public byte ResultFormat { get; set; }

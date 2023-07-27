@@ -9,6 +9,9 @@ const messages = {
             profile_button_title: "Profile",
             logout_button_title: "Log out",
             document_button_title: "Documents",
+            next_button_title: "Next",
+            back_button_title: "Back",
+            finish_button_title: "Finish",
         },
         home: {
             title: "Generate documentation with help of AI",
@@ -26,6 +29,7 @@ const messages = {
         documents_types: {
             document_type_title: "Document type",
             document_generate_title: "Generate document",
+            document_generating_title: "Your document",
 
             charter_title: "Project Charter",
             charter_description: "Project Charter is a detailed document that outlines the goals, stakeholders, scope and other relevant information regarding a project.",

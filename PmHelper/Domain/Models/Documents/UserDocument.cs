@@ -2,7 +2,7 @@
 
 namespace PmHelper.Domain.Models.Documents
 {
-    public class UserDocument : IUserDocument
+    internal class UserDocument : IUserDocument
     {
         public int Id { get; init; }
         public IDocumentType DocumentType { get; init; }

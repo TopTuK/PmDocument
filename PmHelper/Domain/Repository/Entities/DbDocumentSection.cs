@@ -14,7 +14,7 @@ namespace PmHelper.Domain.Repository.Entities
         public int TypeId { get; set; }
 
         [Required]
-        public string? Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         public byte Priority { get; set; } = 0;
 

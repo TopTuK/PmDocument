@@ -16,10 +16,10 @@ namespace PmHelper.Domain.Repository.Entities
         public int TypeId { get; set; }
 
         [Required]
-        public string? Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [Required]
-        public string? Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         public DateTime CreatedDate { get; set; }
 

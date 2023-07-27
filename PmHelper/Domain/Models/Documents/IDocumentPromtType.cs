@@ -1,6 +1,6 @@
 ﻿namespace PmHelper.Domain.Models.Documents
 {
-    public enum DocumentFormatType
+    public enum DocumentFormatType: byte
     {
         Plain = 0,
         Markdown = 1,

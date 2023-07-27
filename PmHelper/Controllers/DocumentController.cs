@@ -23,7 +23,7 @@ namespace PmHelper.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetCurrentUserDocuments()
-        {
+        { 
             _logger.LogInformation("DocumentController::GetCurrentUserDocuments: start handling request");
             
             var userId = (int) HttpContext.Items["userId"]!;
@@ -45,10 +45,12 @@ namespace PmHelper.Controllers
         public async Task<IActionResult> GenerateDocument([FromBody] GenerateDocumentInfo documentRequest)
         {
             _logger.LogInformation("DocumentController::GenerateDocument: start generate document. Document type={}",
-                documentRequest.Id);
+                documentRequest.TypeId);
 
             var userId = (int)HttpContext.Items["userId"]!;
             _logger.LogInformation("DocumentController::GenerateDocument: userId={}", userId);
+
+            var userDocument = await _documentService.GenerateUserDocumentAsync(userId, documentRequest.TypeId, documentRequest.Text);
 
             throw new NotImplementedException();
         }

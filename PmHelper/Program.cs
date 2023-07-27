@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using PmHelper.Domain.Repository;
+using PmHelper.Domain.Services.ChatGpt;
 using PmHelper.Domain.Services.Documents;
 using PmHelper.Domain.Services.Users;
 using PmHelper.Middlewares;
@@ -41,6 +42,7 @@ internal class Program
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IDocumentService, DocumentService>();
+        services.AddSingleton<IDocumentGptService, DocumentGptService>();
     }
 
     private static void Main(string[] args)
