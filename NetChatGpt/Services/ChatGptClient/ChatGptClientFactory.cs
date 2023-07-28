@@ -16,7 +16,7 @@ namespace NetChatGptCLient.Services.ChatGptClient
             public string Model { get; set; } = OpenAIChatGptModels.Gpt35Turbo;
             public double Temperature { get; set; } = 1.0;
             public double TopP { get; set; } = 1.0;
-            public int MaxTokens { get; set; } = 4096;
+            public int MaxTokens { get; set; } = 1024;
             public double PresencePenalty { get; set; } = 0.0;
             public double FrequencyPenalty { get; set; } = 0.0;
 

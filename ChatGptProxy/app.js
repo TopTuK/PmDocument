@@ -12,7 +12,8 @@ let app = express();
 
 process.on("uncaughtException", function (err) {
     if (DEBUG) {
-        console.error(`Express: Exception raised: ${err}`);
+        const logStr = JSON.stringify(err);
+        console.error(`Express: Exception raised! `, logStr);
     }
 });
 

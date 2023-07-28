@@ -30,6 +30,7 @@ const messages = {
             document_type_title: "Document type",
             document_generate_title: "Generate document",
             document_generating_title: "Your document",
+            docuemnt_name_title: "Document name",
 
             charter_title: "Project Charter",
             charter_description: "Project Charter is a detailed document that outlines the goals, stakeholders, scope and other relevant information regarding a project.",

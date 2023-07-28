@@ -18,23 +18,35 @@
                     </section>
                 </TabContent>
 
-                <TabContent :title="$t('documents_types.document_generate_title')">
+                <TabContent
+                    :title="$t('documents_types.document_generate_title')"
+                    :before-change="checkDocumentInfo"
+                >
                     <section class="prose max-w-none h-72">
-                        <h2 class="text-4xl mt-6">{{ $t(`documents_types.${document.create_title}`) }}</h2>
-                        <div class="my-8">
+                        <h2 class="text-4xl mt-4">{{ $t(`documents_types.${document.create_title}`) }}</h2>
+                        <div class="flex flex-col my-4">
                             <p>
                                 <b>{{ $t(`documents_types.${document.create_descrciption}`) }}</b>
                             </p>
 
+                            <va-input
+                                class="w-full max-w-2xl"
+                                v-model="documentName"
+                                :placeholder="$t('documents_types.docuemnt_name_title')"
+                            />
+
                             <textarea
                                 v-model="requestText"
                                 :placeholder="$t(`documents_types.${document.create_placeholder}`)"
-                                class="textarea textarea-bordered textarea-lg w-full max-w-2xl h-36" />
+                                class="mt-2 textarea textarea-bordered textarea-lg w-full max-w-2xl h-28" />
                         </div>
                     </section>
                 </TabContent>
 
-                <TabContent :title="$t('documents_types.document_generating_title')">
+                <TabContent 
+                    :title="$t('documents_types.document_generating_title')"
+                    :lazy="true"
+                >
                     <va-button
                         @click="onGenerateDocument"
                     >
@@ -43,6 +55,18 @@
                 </TabContent>
             </FormWizard>
         </div>
+
+        <va-modal
+            v-model="isDocumentNameError"
+        >
+            NAME ERROR!
+        </va-modal>
+
+        <va-modal
+            v-model="isRequestTextError"
+        >
+            REQUEST TEXT ERROR!
+        </va-modal>
     </div>
 </template>
 
@@ -59,7 +83,27 @@ import useDocumentService from '@/services/documentService.js';
 const route = useRoute();
 const document = document_types.find((doc) => doc.id == route.params.type_id);
 
+const documentName = ref('');
 const requestText = ref('');
+
+const isDocumentNameError = ref(false);
+const isRequestTextError = ref(false);
+
+const checkDocumentInfo = () => {
+    if (documentName.value.trim() == "") {
+        
+        isDocumentNameError.value = true;
+        return false;
+    }
+
+    if (requestText.value.trim() == "") {
+        isRequestTextError.value = true;
+
+        return false;
+    }
+
+    return true;
+}
 
 const { generateUserDocument } = useDocumentService();
 

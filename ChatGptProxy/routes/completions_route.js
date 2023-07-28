@@ -6,13 +6,13 @@ import { streamCompletion, generateId, getOpenAIKey } from "../utils.js";
 
 async function completions(req, res) {
     if (!req.body.prompt) {
-        console.error("No prompt provided. Return bad request.")
+        console.error("No prompt provided. Returning bad request.")
 
         res.set("Content-Type", "application/json");
 
         return res.status(400).send({
             status: false,
-            error: "No prompt provided"
+            error: "No prompt provided."
         });
     }
 
@@ -29,7 +29,7 @@ async function completions(req, res) {
 
     if (MODERATION) {
         if (DEBUG) {
-            console.log("Start prompt moderation");
+            console.log("Start prompt moderation.");
         }
 
         try {
@@ -40,7 +40,7 @@ async function completions(req, res) {
             });
 
             if (DEBUG) {
-                console.log(`Moderation response: ${response.data}`);
+                console.log("Moderation response: ", JSON.stringify(response.data));
             }
 
             if (response.data.results[0].flagged) {
@@ -56,7 +56,7 @@ async function completions(req, res) {
             }
         }
         catch (e) {
-            console.error(`Exception raised: ${e}`);
+            console.error("Exception raised: ", JSON.stringify(e));
         }
     }
 
@@ -86,11 +86,11 @@ async function completions(req, res) {
             res.setHeader("content-type", "text/event-stream");
             for await (const message of streamCompletion(response.data)) {
                 try {
-                    const parsed = JSON.parse(message);
-
                     if (DEBUG) {
-                        console.log(`Parsed response: ${parsed}`);
+                        console.log(`Stream response: ${message}`);
                     }
+
+                    const parsed = JSON.parse(message);
 
                     delete parsed.id;
                     delete parsed.created;
@@ -120,7 +120,7 @@ async function completions(req, res) {
                 return res.status(error.response.status).send(errorResponseJson);
             }
             else {
-                console.error("Could not JSON parse stream message", error);
+                console.error("Could not JSON parse stream message. ", JSON.stringify(error));
                 return res.status(500).send({
                     status: false,
                     error: "Exception raised: something went wrong!"
@@ -146,7 +146,7 @@ async function completions(req, res) {
             );
 
             if (DEBUG) {
-                console.log(`Got respose from OpenAI: ${response.data}`);
+                console.log("Got respose from OpenAI: ", JSON.stringify(response.data));
             }
 
             delete response.data.id;
@@ -162,7 +162,7 @@ async function completions(req, res) {
                 return res.status(error.response.status).send(error.response.data);
             }
             catch (e) {
-                console.log(`Exception raised: ${e}`);
+                console.log("Exception raised: ", JSON.stringify(e));
 
                 return res.status(500).send({
                     status: false,

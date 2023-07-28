@@ -52,7 +52,7 @@ async function chatCompletions(req, res) {
             });
 
             if (DEBUG) {
-                console.log(`OpenAI moderation response: ${response.data.results}`);
+                console.log("OpenAI moderation response: ", JSON.stringify(response.data.results));
             }
 
             if (response.data.results[0].flagged) {
@@ -69,7 +69,7 @@ async function chatCompletions(req, res) {
             }
         }
         catch (error) {
-            console.error(`Moderation exception: ${error}`);
+            console.error("Moderation exception: ", JSON.stringify(error));
 
             return res.status(500).send({
                 status: false,
@@ -109,11 +109,11 @@ async function chatCompletions(req, res) {
 
             for await (const message of streamCompletion(response.data)) {
                 try {
-                    const parsed = JSON.parse(message);
-
                     if (DEBUG) {
-                        console.log(`Parsed response: ${parsed}`);
+                        console.log(`Message response: ${message}`);
                     }
+
+                    const parsed = JSON.parse(message);
 
                     delete parsed.id;
                     delete parsed.created;
@@ -125,7 +125,7 @@ async function chatCompletions(req, res) {
                     }
                 }
                 catch (error) {
-                    console.error("Could not JSON parse stream message", message, error);
+                    console.error("Could not JSON parse stream message", message, JSON.stringify(error));
                 }
             }
 
@@ -144,7 +144,7 @@ async function chatCompletions(req, res) {
                     errorResponseStr = errorResponseStr.replace(/org-[a-zA-Z0-9]+/, orgId);
                     const errorResponseJson = JSON.parse(errorResponseStr);
 
-                    console.error(`Stream response status: ${error.response.status}. Error: ${errorResponseJson}`);
+                    console.error(`Stream response status: ${error.response.status}. Error: ${JSON.stringify(errorResponseJson)}`);
                     return res.status(error.response.status).send(errorResponseJson);
                 }
                 else {
@@ -156,7 +156,7 @@ async function chatCompletions(req, res) {
                 }
             }
             catch (e) {
-                console.error("Exception raised.", e);
+                console.error("Exception raised.", JSON.stringify(e));
 
                 return res.status(500).send({
                     status: false,
@@ -195,11 +195,11 @@ async function chatCompletions(req, res) {
             try {
                 error.response.data.error.message = error.response.data.error.message.replace(/org-[a-zA-Z0-9]+/, orgId);
 
-                console.error(`Response error status: ${error.response.status}. Message: ${error.response.data}`);
+                console.error(`Response error status: ${error.response.status}. Message: `, JSON.stringify(error.response.data));
                 return res.status(error.response.status).send(error.response.data);
             }
             catch (e) {
-                console.error("Exception raised", e);
+                console.error("Exception raised", JSON.stringify(e));
 
                 return res.status(500).send({
                     status: false,
