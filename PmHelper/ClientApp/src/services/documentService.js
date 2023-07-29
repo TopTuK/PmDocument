@@ -57,7 +57,7 @@ export default function useDocumentService() {
     }
 
     // Create document
-    async function generateUserDocument(typeId, text) {
+    async function generateUserDocument(typeId, name, text) {
         if (DEBUG) {
             console.log("DocumentService::generateUserDocument: start generating user document");
             console.log(`DocumentType=${typeId}. Text=${text}`);
@@ -66,6 +66,7 @@ export default function useDocumentService() {
         try {
             const requestBody = {
                 typeId: typeId,
+                name: name,
                 text: text,
             }
 

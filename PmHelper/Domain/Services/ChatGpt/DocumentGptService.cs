@@ -23,10 +23,18 @@ namespace PmHelper.Domain.Services.ChatGpt
 
         public async Task<string?> GenerateDocumentAsync(string systemMessage, string documentPromt)
         {
-            var conversation = await _chatGptClient.StartNewConversation(systemMessage);
-            var chatResponse = await _chatGptClient.AskAsync(conversation, documentPromt);
+            try
+            {
+                var conversation = await _chatGptClient.StartNewConversation(systemMessage);
+                var chatResponse = await _chatGptClient.AskAsync(conversation, documentPromt);
 
-            return chatResponse;
+                return chatResponse;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("IDocumentGptService::GenerateDocumentAsync: Exception raised. Msg: {}", ex.Message);
+                return null;
+            }
         }
     }
 }

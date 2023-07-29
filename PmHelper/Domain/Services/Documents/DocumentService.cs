@@ -120,7 +120,7 @@ namespace PmHelper.Domain.Services.Documents
             return documentPromt.ToString();
         }
 
-        public async Task<IUserDocument?> GenerateUserDocumentAsync(int userId, int documentTypeId, string requestText)
+        public async Task<IUserDocument?> GenerateUserDocumentAsync(int userId, int documentTypeId, string name, string requestText)
         {
             _logger.LogInformation(
                 "DocumentService::GenerateUserDocumentAsync: start generate document for user={}. DocumentType={}",
@@ -150,9 +150,18 @@ namespace PmHelper.Domain.Services.Documents
                 dbDocumentType.Name);
             var documentText = await _docGptService.GenerateDocumentAsync(systemPromt, documentPromt);
 
-            _logger.LogInformation(documentText);
+            if (documentText == null)
+            {
+                _logger.LogError("DocumentService::GenerateUserDocumentAsync: can\'t generate user document. ChatGpt returned null");
+                return null;
+            }
 
-            throw new NotImplementedException();
+#if DEBUG
+            _logger.LogInformation($"DocumentService::GenerateUserDocumentAsync: Generated document. Text:\n\r{documentText}");
+#endif
+
+            // TODO: refactor it to factory.
+            return new UserDocument(new DocumentTypeImpl(dbDocumentType), name, documentText);
         }
     }
 }

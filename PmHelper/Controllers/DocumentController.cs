@@ -50,9 +50,23 @@ namespace PmHelper.Controllers
             var userId = (int)HttpContext.Items["userId"]!;
             _logger.LogInformation("DocumentController::GenerateDocument: userId={}", userId);
 
-            var userDocument = await _documentService.GenerateUserDocumentAsync(userId, documentRequest.TypeId, documentRequest.Text);
+            try
+            {
+                var userDocument = await _documentService.GenerateUserDocumentAsync(
+                    userId,
+                    documentRequest.TypeId, documentRequest.Name, 
+                    documentRequest.Text
+                );
 
-            throw new NotImplementedException();
+                _logger.LogInformation(
+                    "DocumentController::GenerateDocument: generated user document");
+                return new JsonResult(userDocument);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("DocumentController::GenerateDocument: Exception raised. Msg: ", ex.Message);
+                return BadRequest("Exception raised while document generation");
+            }
         }
     }
 }

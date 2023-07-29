@@ -25,5 +25,18 @@ namespace PmHelper.Domain.Models.Documents
                 ? new DocumentTypeImpl(dbUserDocument.DocumentType!)
                 : DocumentTypeImpl.UnknownDocumentType();
         }
+
+        public UserDocument(IDocumentType documentType, string title, string content)
+        {
+            Id = -1;
+
+            Title = title;
+            Content = content;
+
+            DocumentType = documentType;
+
+            Created = DateTime.Now.Date;
+            LastModified = Created;
+        }
     }
 }
