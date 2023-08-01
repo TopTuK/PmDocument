@@ -21,6 +21,9 @@ namespace PmHelper.Domain.Repository.Entities
         [Required]
         public string Content { get; set; } = string.Empty;
 
+        [Required]
+        public string RequestText { get; set; } = string.Empty;
+
         public DateTime CreatedDate { get; set; }
 
         public DateTime EditedDate { get; set; }

@@ -5,6 +5,6 @@ namespace PmHelper.Domain.Services.Documents
     public interface IDocumentService
     {
         Task<IEnumerable<IUserDocument>> GetUserDocumentsAsync(int userId);
-        Task<IUserDocument?> GenerateUserDocumentAsync(int userId, int documentTypeId, string name, string requestText);
+        Task<IUserDocument?> GenerateUserDocumentAsync(int userId, int documentTypeId, string documentTitle, string requestText);
     }
 }

@@ -87,7 +87,7 @@
                     :lazy="true"
                     :after-change="generateDocument"
                 >
-                    <section class="prose max-w-none h-72">
+                    <section class="prose max-w-none">
                         <div
                             v-if="generateDocumentState.isLoading"
                             class="flex flex-col items-center justify-items-center justify-center"
@@ -105,6 +105,10 @@
                         <div
                             v-else-if="generateDocumentState.document != null"
                         >
+                            <Markdown
+                                :source="generateDocumentState.document.content"
+                                class="p-2 m-2 bg-gray-200"
+                            />
                         </div>
                     </section>
                 </TabContent>
@@ -128,12 +132,14 @@
 <script setup>
 // https://vue3-form-wizard-document.netlify.app/demos/#simple
 // https://www.koderhq.com/tutorial/vue/composition-api-router-routing/
+// https://www.npmjs.com/package/vue3-markdown-it
 import { ref, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { FormWizard, TabContent } from 'vue3-form-wizard';
 import 'vue3-form-wizard/dist/style.css';
 import document_types from '@/models/documents_types.js';
 import useDocumentService from '@/services/documentService.js';
+import Markdown from 'vue3-markdown-it';
 
 const route = useRoute();
 const document = document_types.find((doc) => doc.id == route.params.type_id);
@@ -177,7 +183,7 @@ const generateDocument = async () => {
     try {
         let userDocument = await generateUserDocument(document.id, documentName.value, requestText.value);
         if (userDocument != null) {
-            generateDocumentState.document = document;
+            generateDocumentState.document = userDocument;
         }
         else {
             generateDocumentState.document = null;

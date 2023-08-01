@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetChatGptCLient.Services.ChatGptClient;
+using PmHelper.Domain.Models;
 using PmHelper.Domain.Models.Documents;
 using PmHelper.Domain.Repository;
 using PmHelper.Domain.Repository.Entities;
@@ -33,7 +34,7 @@ namespace PmHelper.Domain.Services.Documents
 
             var userDocuments = await _dbContext.UserDocuments
                 .Where(dbDoc => dbDoc.UserId == userId)
-                .Select(dbDoc => new UserDocument(dbDoc))
+                .Select(dbDoc => UserDocument.CreateUserDocument(dbDoc))
                 .ToListAsync();
 
             _logger.LogInformation(
@@ -120,7 +121,44 @@ namespace PmHelper.Domain.Services.Documents
             return documentPromt.ToString();
         }
 
-        public async Task<IUserDocument?> GenerateUserDocumentAsync(int userId, int documentTypeId, string name, string requestText)
+        private async Task<DbUserDocument> SaveGeneratedUserDocument(
+            int userId, int typeId, string title, string requestText, string content)
+        {
+            var dbDocument = new DbUserDocument
+            {
+                UserId = userId,
+                TypeId = typeId,
+                Title = title,
+                RequestText = requestText,
+                Content = content,
+                CreatedDate = DateTime.Now,
+                EditedDate = DateTime.Now,
+            };
+
+            try
+            {
+                _logger.LogInformation(
+                    "DocumentService::SaveGeneratedUserDocument: saving user document {} {} {}",
+                    userId, typeId, title);
+
+                _dbContext.UserDocuments.Add(dbDocument);
+                await _dbContext.SaveChangesAsync();
+
+#if DEBUG
+                _logger.LogInformation("DocumentService::SaveGeneratedUserDocument: user document saved to database");
+#endif
+
+                return dbDocument;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("DocumentService::SaveGeneratedUserDocument: EXCEPTION. Msg: ", ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<IUserDocument?> GenerateUserDocumentAsync(
+            int userId, int documentTypeId, string documentTitle, string requestText)
         {
             _logger.LogInformation(
                 "DocumentService::GenerateUserDocumentAsync: start generate document for user={}. DocumentType={}",
@@ -128,11 +166,14 @@ namespace PmHelper.Domain.Services.Documents
             );
 
             var dbDocumentType = await _dbContext.DocumentTypes
-                .FirstOrDefaultAsync(doc => doc.Id == documentTypeId);
+                .FirstOrDefaultAsync(docType => docType.Id == documentTypeId);
 
             if (dbDocumentType == null )
             {
-                throw new Exception("");
+                _logger.LogError(
+                    "DocumentService::GenerateUserDocumentAsync: ERROR can\'t find document type with id={}",
+                    documentTypeId);
+                throw new DocumentException($"Can't find document type with id={documentTypeId}");
             }
 
             _logger.LogInformation(
@@ -141,7 +182,7 @@ namespace PmHelper.Domain.Services.Documents
             );
 
             // Make document promt
-            var systemPromt = $"You are {dbDocumentType.AssistantName}. You are expert in subject.";
+            var systemPromt = $"You are professional {dbDocumentType.AssistantName}. You are expert in subject.";
             var documentPromt = await MakeDocumentPromtAsync(dbDocumentType, requestText);
 
             // Ask ChatGpt to create document
@@ -153,15 +194,17 @@ namespace PmHelper.Domain.Services.Documents
             if (documentText == null)
             {
                 _logger.LogError("DocumentService::GenerateUserDocumentAsync: can\'t generate user document. ChatGpt returned null");
-                return null;
+                throw new DocumentException("Can\'t generate user document. ChatGpt returned null");
             }
 
 #if DEBUG
             _logger.LogInformation($"DocumentService::GenerateUserDocumentAsync: Generated document. Text:\n\r{documentText}");
 #endif
 
-            // TODO: refactor it to factory.
-            return new UserDocument(new DocumentTypeImpl(dbDocumentType), name, documentText);
+            var dbUserDocument = await SaveGeneratedUserDocument(
+                userId, documentTypeId,
+                documentTitle, requestText, documentText);
+            return UserDocument.CreateUserDocument(dbUserDocument);
         }
     }
 }

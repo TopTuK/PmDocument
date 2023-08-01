@@ -10,8 +10,6 @@ namespace NetChatGptCLient.Models.ChatGpt.Cache
     {
         private readonly Dictionary<Guid, IChatGptConversation> _conversations = new();
 
-        public IEnumerable<IChatGptConversation> Conversations => _conversations.Values;
-
         public async Task AddAsync(IChatGptConversation conversation)
         {
             _conversations.TryAdd(conversation.ConversationId, conversation);
@@ -26,6 +24,12 @@ namespace NetChatGptCLient.Models.ChatGpt.Cache
             }
 
             return await Task.FromResult<IChatGptConversation?>(null);
+        }
+
+        public async Task RemoveAsync(Guid conversationId)
+        {
+            _conversations.Remove(conversationId);
+            await Task.CompletedTask;
         }
     }
 }

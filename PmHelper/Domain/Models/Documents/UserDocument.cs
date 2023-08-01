@@ -7,15 +7,17 @@ namespace PmHelper.Domain.Models.Documents
         public int Id { get; init; }
         public IDocumentType DocumentType { get; init; }
         public string Title { get; init; }
+        public string RequestText { get; init; }
         public string Content { get; init; }
         public DateTime Created { get; init; }
         public DateTime LastModified { get; init; }
 
-        public UserDocument(DbUserDocument dbUserDocument)
+        private UserDocument(DbUserDocument dbUserDocument)
         {
             Id = dbUserDocument.Id;
 
             Title = dbUserDocument.Title!;
+            RequestText = dbUserDocument.RequestText;
             Content = dbUserDocument.Content!;
 
             Created = dbUserDocument.CreatedDate;
@@ -26,17 +28,9 @@ namespace PmHelper.Domain.Models.Documents
                 : DocumentTypeImpl.UnknownDocumentType();
         }
 
-        public UserDocument(IDocumentType documentType, string title, string content)
+        public static IUserDocument CreateUserDocument(DbUserDocument dbUserDocument)
         {
-            Id = -1;
-
-            Title = title;
-            Content = content;
-
-            DocumentType = documentType;
-
-            Created = DateTime.Now.Date;
-            LastModified = Created;
+            return new UserDocument(dbUserDocument);
         }
     }
 }

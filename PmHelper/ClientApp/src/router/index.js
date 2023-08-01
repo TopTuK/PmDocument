@@ -13,6 +13,7 @@ const FeatureRequirements = () => import('@/views/documents/FeatureRequirements.
 const UserStory = () => import('@/views/documents/UserStory.vue')
 
 const CreateDocument = () => import('@/views/CreateDocument.vue')
+const UserDocument = () => import('@/views/UserDocument.vue')
 
 const routes = [
     {
@@ -90,6 +91,16 @@ const routes = [
             requiresAuth: true,
         },
     },
+    {
+        path: "/profile/document/:id",
+        name: "UserDocument",
+        props: true,
+        component: UserDocument,
+        meta: {
+            title: "user_document_title",
+            requiresAuth: true,
+        },
+    }
 ];
 
 const authService = useAuthService();

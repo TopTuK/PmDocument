@@ -58,8 +58,7 @@ namespace PmHelper.Controllers
                     documentRequest.Text
                 );
 
-                _logger.LogInformation(
-                    "DocumentController::GenerateDocument: generated user document");
+                _logger.LogInformation("DocumentController::GenerateDocument: generated user document");
                 return new JsonResult(userDocument);
             }
             catch (Exception ex)

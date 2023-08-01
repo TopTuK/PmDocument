@@ -10,6 +10,7 @@
         IDocumentType DocumentType { get; }
 
         string Title { get; }
+        string RequestText { get; }
         string Content { get; }
 
         DateTime Created { get; }

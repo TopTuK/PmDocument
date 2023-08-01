@@ -141,6 +141,9 @@ internal class Program
         // Add AppDbContext
         builder.Services.AddDbContext<AppDbContext>();
 
+        // Add MemoryCache
+        builder.Services.AddMemoryCache();
+
         // Configure application services
         ConfigureServices(builder.Services);
 

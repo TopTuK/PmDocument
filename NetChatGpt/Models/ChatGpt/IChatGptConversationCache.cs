@@ -11,8 +11,6 @@ namespace NetChatGptCLient.Models.ChatGpt
     /// </summary>
     public interface IChatGptConversationCache
     {
-        IEnumerable<IChatGptConversation> Conversations { get; }
-
         /// <summary>
         /// Adds given conversation in cache.
         /// </summary>
@@ -27,5 +25,12 @@ namespace NetChatGptCLient.Models.ChatGpt
         /// <param name="conversationId"></param>
         /// <returns>The conversation, or <see langword="null"/> if the ConversationId Id does not exist.</returns>
         Task<IChatGptConversation?> GetAsync(Guid conversationId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="conversationId"></param>
+        /// <returns></returns>
+        Task RemoveAsync(Guid conversationId);
     }
 }
