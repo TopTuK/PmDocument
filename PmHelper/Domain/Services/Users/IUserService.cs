@@ -31,5 +31,12 @@ namespace PmHelper.Domain.Services.Users
         /// <param name="userId"></param>
         /// <returns></returns>
         Task DeleteUserAsync(int userId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        bool IsUserAdmin(string email);
     }
 }

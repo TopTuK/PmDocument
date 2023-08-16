@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
-import useAuthService from "@/services/authService.js"
+
+import useAuthService from '@/services/authService.js'
+import useUserService from '../services/userService.js'
 
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
@@ -14,6 +16,8 @@ const UserStory = () => import('@/views/documents/UserStory.vue')
 
 const CreateDocument = () => import('@/views/CreateDocument.vue')
 const UserDocument = () => import('@/views/UserDocument.vue')
+
+const Dashboard = () => import('@/views/Dashboard.vue')
 
 const routes = [
     {
@@ -100,6 +104,16 @@ const routes = [
             title: "user_document_title",
             requiresAuth: true,
         },
+    },
+    {
+        path: "/dashboard",
+        name: "Dashboard",
+        component: Dashboard,
+        meta: {
+            title: "dashboard_title",
+            requiresAdmin: true,
+            requiresAuth: true,
+        },
     }
 ];
 
@@ -125,19 +139,30 @@ router.beforeEach(async (to, from) => {
             if (!isAuthenticated) {
                 return { name: 'Login' }
             }
+
+            if (to.meta.requiresAdmin) {
+                console.log(`Route to \"${to.name}\" requires admin rights`);
+
+                const userService = useUserService();
+                // TODO: refact user service with pinia
+            }
+
             return isAuthenticated;
         }
         catch (error) {
             if (error instanceof NotAllowedError) {
                 // handle the error and then cancel the navigation
-                return false
+                return false;
             } 
             else {
                 // unexpected error, cancel the navigation and pass the error to the global handler
-                throw error
+                throw error;
             }
         }
     }
+
+    // If nothing, undefined or true is returned, the navigation is validated, and the next navigation guard is called.
+    return true;
 });
 
 export default router;

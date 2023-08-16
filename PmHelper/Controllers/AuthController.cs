@@ -91,6 +91,11 @@ namespace PmHelper.Controllers
                     new("email", user.Email),
                 };
 
+                if (_userService.IsUserAdmin(user.Email))
+                {
+                    claims.Add(new("isAdmin", "yes"));
+                }
+
                 // Run user authentification login (First time seen?)
                 //var ci = new ClaimsIdentity(claims, "pwd", "name", "role");
                 var ci = new ClaimsIdentity(claims, schemeName);

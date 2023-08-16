@@ -19,6 +19,8 @@ namespace PmHelper.Domain.Repository.Entities
         [Required]
         public string? LastName { get; set; }
 
+        public bool IsAdmin { get; set; } = false;
+
         public int DocumentsCount { get; set; } = 3;
     }
 }

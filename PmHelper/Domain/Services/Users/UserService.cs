@@ -16,12 +16,16 @@ namespace PmHelper.Domain.Services.Users
             public string LastName { get; init; } = string.Empty;
             public string Email { get; init; } = string.Empty;
 
+            public bool IsAdmin { get; init; } = false;
+
             public User(DbUser dbUser)
             {
                 Id = dbUser.Id;
                 Email = dbUser.Email!;
                 FirstName = dbUser.FirstName ?? "Anonymous";
                 LastName = dbUser.LastName ?? string.Empty;
+
+                IsAdmin = dbUser.IsAdmin;
             }
         }
 
@@ -39,6 +43,8 @@ namespace PmHelper.Domain.Services.Users
         private readonly string _googleSchemeName;
         private readonly string _oidcSchemeName;
 
+        private readonly List<string> _adminEmails = new();
+
         public UserService(AppDbContext dbContext, IConfiguration configuration,
             ILogger<IUserService> logger)
         {
@@ -46,6 +52,12 @@ namespace PmHelper.Domain.Services.Users
 
             _googleSchemeName = configuration["GoogleAuth:Name"] ?? "google";
             _oidcSchemeName = configuration["OidcAuth:Name"] ?? "oidc";
+
+            var adminEmails = configuration["AdminEmails"]?.Split(',');
+            if (adminEmails != null)
+            {
+                _adminEmails.AddRange(adminEmails);
+            }
 
             _logger = logger;
         }
@@ -55,11 +67,11 @@ namespace PmHelper.Domain.Services.Users
         {
             try
             {
-                _logger.LogInformation($"Get or Create user with email: {email}");
+                _logger.LogInformation($"UserService::GetOrCreateUserAsync: Get or Create user with email: {email}");
                 
                 var dbUser = await _dbContext.Users
                     .FirstOrDefaultAsync(u => u.Email == email);
-                _logger.LogInformation($"User with {email} found result: {dbUser == null}");
+                _logger.LogInformation($"UserService::GetOrCreateUserAsync: User with {email} found result: {dbUser == null}");
 
                 if (dbUser == null) // Create user
                 {
@@ -67,10 +79,16 @@ namespace PmHelper.Domain.Services.Users
                     {
                         FirstName = firstName,
                         LastName = lastName,
-                        Email = email
+                        Email = email,
                     };
 
-                    _logger.LogInformation($"Creating new user: {email} {firstName} {lastName}");
+                    if (IsUserAdmin(email))
+                    {
+                        _logger.LogWarning("UserService::GetOrCreateUserAsync: creating user with admin rights. Email={}", email);
+                        dbUser.IsAdmin = true;
+                    }
+
+                    _logger.LogInformation($"UserService::GetOrCreateUserAsync: Creating new user: {email} {firstName} {lastName}");
 
                     await _dbContext.Users.AddAsync(dbUser);
                     await _dbContext.SaveChangesAsync();
@@ -79,13 +97,13 @@ namespace PmHelper.Domain.Services.Users
                 }
                 else
                 {
-                    _logger.LogInformation($"User exists: {dbUser.Id} {dbUser.Email} {dbUser.FirstName} {dbUser.LastName}");
+                    _logger.LogInformation($"UserService::GetOrCreateUserAsync: User exists: {dbUser.Id} {dbUser.Email} {dbUser.FirstName} {dbUser.LastName}");
                     return new User(dbUser);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogCritical("Can't get or create user. Msg: {}", ex.Message);
+                _logger.LogCritical("UserService::GetOrCreateUserAsync: Can't get or create user. Msg: {}", ex.Message);
                 throw;
             }
         }
@@ -159,7 +177,7 @@ namespace PmHelper.Domain.Services.Users
             }
             else
             {
-                _logger.LogCritical($"Unknown scheme name \"{schemeName}\"");
+                _logger.LogCritical($"UserService::GetUserInfo: Unknown scheme name \"{schemeName}\"");
                 throw new AuthenticationException($"Unknown scheme name \"{schemeName}\"");
             }
         }
@@ -167,14 +185,14 @@ namespace PmHelper.Domain.Services.Users
         public async Task<IUser> AuthenticateAsync(string schemeName,
             IEnumerable<Claim> claims, IDictionary<string, string> metadata)
         {
-            _logger.LogInformation($"Start authenticating user with scheme \"{schemeName}\"");
+            _logger.LogInformation($"UserService::AuthenticateAsync: Start authenticating user with scheme \"{schemeName}\"");
 
             var userInfo = GetUserInfo(schemeName, claims);
-            _logger.LogInformation($"UserInfo: {userInfo.Email} {userInfo.FirstName} {userInfo.LastName}");
+            _logger.LogInformation($"UserService::AuthenticateAsync: UserInfo: {userInfo.Email} {userInfo.FirstName} {userInfo.LastName}");
 
             if (userInfo.Email == null)
             {
-                _logger.LogError("GoogleAuthScheme: user email claim is null");
+                _logger.LogError("UserService::AuthenticateAsync: GoogleAuthScheme: user email claim is null");
                 throw new AuthenticationException("GoogleAuthScheme: user email claim is null");
             }
 
@@ -235,5 +253,7 @@ namespace PmHelper.Domain.Services.Users
                 throw;
             }
         }
+
+        public bool IsUserAdmin(string email) => _adminEmails.Contains(email);
     }
 }

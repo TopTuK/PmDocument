@@ -24,6 +24,12 @@
                 >
                     {{ $t('common.logout_button_title') }}
                 </va-button>
+
+                <va-button
+                    v-if="props.userInfo.isAdmin"
+                >
+                    Admin panel
+                </va-button>
             </div>
         </va-card-content>
     </va-card>
