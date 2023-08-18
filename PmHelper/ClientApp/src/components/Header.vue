@@ -55,10 +55,10 @@
 
 <script setup>
 import { computed } from "vue";
-import useAuthService from "@/services/authService.js";
+import { useUserStore } from "@/stores/userStore";
 
-const authService = useAuthService();
+const userStore = useUserStore();
 const isAuthenticated = computed(() => {
-    return authService.isAuthenticated();
+    return userStore.isAuthenticated();
 });
 </script>

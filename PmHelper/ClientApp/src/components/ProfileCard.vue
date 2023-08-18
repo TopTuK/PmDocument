@@ -27,6 +27,7 @@
 
                 <va-button
                     v-if="props.userInfo.isAdmin"
+                    href="/dashboard"
                 >
                     Admin panel
                 </va-button>

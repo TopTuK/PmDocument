@@ -70,5 +70,16 @@ namespace PmHelper.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize(Policy = "IsAdmin")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            _logger.LogInformation("UserController::GetAllUsers: start getting all users");
+
+            var users = await _userService.GetAllUsersAsync();
+
+            _logger.LogInformation("UserController::GetAllUsers: return {} users", users.Count());
+            return new JsonResult(users);
+        }
     }
 }

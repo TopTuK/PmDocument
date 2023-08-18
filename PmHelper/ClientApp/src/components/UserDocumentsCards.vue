@@ -1,12 +1,12 @@
 <template>
     <!-- User documents loading -->
     <va-inner-loading
-        v-if="userDocuments.loading"
+        v-if="userDocumentsState.isLoading"
         loading
     />
 
     <va-card
-        v-else-if="userDocuments.error"
+        v-else-if="(userDocumentsState.error != null)"
     >
         <va-card-title>Title</va-card-title>
         <va-card-content>
@@ -15,7 +15,7 @@
     </va-card>
 
     <va-card
-        v-else-if="!userDocuments.error && !userDocuments.loading && (userDocuments.documents.length == 0)"
+        v-else-if="(userDocumentsState.error == null) && (!userDocumentsState.isLoading) && (userDocumentsState.documents.length == 0)"
         :bordered="false"
         disabled
     >
@@ -27,22 +27,23 @@
 
     <UserDocumentCard
         v-else
-        v-for="userDoc in userDocuments.documents"
-        :doc="userDoc"
+        v-for="userDocument in userDocumentsState.documents"
+        :doc="userDocument"
     />
 </template>
 
 <script setup>
 import { onBeforeMount } from 'vue';
-import useDocumentService from '@/services/documentService.js';
+import { storeToRefs } from 'pinia';
+import { useDocumentStore } from '@/stores/documentsStore';
 import UserDocumentCard from './UserDocumentCard.vue';
 
-const documentService = useDocumentService();
-const userDocuments = documentService.userDocuments;
+const documentsStore = useDocumentStore();
+const { userDocumentsState } = storeToRefs(documentsStore);
 
 onBeforeMount(async () => {
     try {
-        await documentService.getUserDocuments();
+        await documentsStore.getUserDocuments();
     } catch (error) {
         console.error(error);
     }

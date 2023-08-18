@@ -67,5 +67,11 @@ namespace PmHelper.Controllers
                 return BadRequest("Exception raised while document generation");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveUserDocument(int documentId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

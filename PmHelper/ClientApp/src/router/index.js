@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 
-import useAuthService from '@/services/authService.js'
-import useUserService from '../services/userService.js'
+import { useUserStore } from '@/stores/userStore'
 
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
@@ -117,8 +116,6 @@ const routes = [
     }
 ];
 
-const authService = useAuthService();
-
 const router = createRouter({
     //history: createWebHashHistory(),
     history: createWebHistory(),
@@ -129,25 +126,31 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-    console.log(`Router beforeach: ${from.name} -> ${to.name} (${to.meta.requiresAuth})`);
+    console.log(`Router::beforeach: ${from.name} -> ${to.name} Requires auth: ${to.meta.requiresAuth}`);
 
     if (to.meta.requiresAuth) {
         try {
-            const isAuthenticated = authService.isAuthenticated();
-            console.log(`Route to \"${to.name}\" auth result: ${isAuthenticated}`);
+            const userStore = useUserStore();
+            const isAuthenticated = userStore.isAuthenticated();
+            console.log(`Router::beforEach: route to \"${to.name}\". Auth result: ${isAuthenticated}`);
 
             if (!isAuthenticated) {
                 return { name: 'Login' }
             }
 
             if (to.meta.requiresAdmin) {
-                console.log(`Route to \"${to.name}\" requires admin rights`);
+                console.log(`Router::beforEach: route to \"${to.name}\" requires admin rights`);
+                
+                const userInfo = await userStore.getUser();
+                if ((userInfo == null) || (true !== userInfo.isAdmin)) {
+                    console.error(`Router::beforEach: user "${userInfo}\" is not admin`);
+                    return { name: 'Profile' }
+                }
 
-                const userService = useUserService();
-                // TODO: refact user service with pinia
+                console.log(`Router::beforEach: user has admin rights. Routing to "${to.name}`);
             }
 
-            return isAuthenticated;
+            return true;
         }
         catch (error) {
             if (error instanceof NotAllowedError) {
@@ -161,7 +164,8 @@ router.beforeEach(async (to, from) => {
         }
     }
 
-    // If nothing, undefined or true is returned, the navigation is validated, and the next navigation guard is called.
+    // If nothing, undefined or true is returned, the navigation is validated,
+    // and the next navigation guard is called.
     return true;
 });
 

@@ -38,5 +38,11 @@ namespace PmHelper.Domain.Services.Users
         /// <param name="email"></param>
         /// <returns></returns>
         bool IsUserAdmin(string email);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<IUser>> GetAllUsersAsync();
     }
 }

@@ -53,8 +53,8 @@
 <script setup>
 import DocumentCard from '@/components/DocumentCard.vue';
 import document_types from '@/models/documents_types.js';
-import useAuthService from '@/services/authService.js';
+import { useUserStore } from '@/stores/userStore';
 
-const authService = useAuthService();
-const isAuthicated = authService.isAuthenticated();
+const userStore = useUserStore();
+const isAuthicated = userStore.isAuthenticated();
 </script>

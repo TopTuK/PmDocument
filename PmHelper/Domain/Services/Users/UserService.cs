@@ -255,5 +255,17 @@ namespace PmHelper.Domain.Services.Users
         }
 
         public bool IsUserAdmin(string email) => _adminEmails.Contains(email);
+
+        public async Task<IEnumerable<IUser>> GetAllUsersAsync()
+        {
+            _logger.LogInformation($"UserService::GetAllUsers: function call");
+
+            var users = await _dbContext.Users
+                .Select(dbUser => new User(dbUser))
+                .ToListAsync();
+
+            _logger.LogInformation("UserService::GetAllUsers: return {} users", users.Count);
+            return users;
+        }
     }
 }

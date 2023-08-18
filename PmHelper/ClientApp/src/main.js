@@ -1,9 +1,11 @@
 import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 import { createVuestic } from 'vuestic-ui';
+import { createPinia } from 'pinia';
+
 import axios from 'axios';
 import VueFormWizard from 'vue3-form-wizard';
-import 'vue3-form-wizard/dist/style.css'
+import 'vue3-form-wizard/dist/style.css';
 
 import router from "@/router/index.js";
 
@@ -13,6 +15,9 @@ import 'vuestic-ui/css';
 import './index.css';
 
 import App from './App.vue';
+
+// create pinia
+const pinia = createPinia();
 
 // Setting axios defaults with stored cookies
 axios.defaults.withCredentials = true;
@@ -27,6 +32,9 @@ const i18n = createI18n({
 
 // Create app
 const app = createApp(App);
+
+// use pinia
+app.use(pinia);
 
 // use router
 app.use(router);

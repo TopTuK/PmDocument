@@ -138,7 +138,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { FormWizard, TabContent } from 'vue3-form-wizard';
 import 'vue3-form-wizard/dist/style.css';
 import document_types from '@/models/documents_types.js';
-import useDocumentService from '@/services/documentService.js';
+import { useDocumentStore } from '@/stores/documentsStore';
 import Markdown from 'vue3-markdown-it';
 
 const route = useRoute();
@@ -166,7 +166,7 @@ const checkDocumentInfo = () => {
     return true;
 }
 
-const { generateUserDocument } = useDocumentService();
+const documentStore = useDocumentStore();
 
 const generateDocumentState = reactive({
     document: null,
@@ -181,7 +181,7 @@ const generateDocument = async () => {
     generateDocumentState.isError = false;
 
     try {
-        let userDocument = await generateUserDocument(document.id, documentName.value, requestText.value);
+        let userDocument = await documentStore.generateUserDocument(document.id, documentName.value, requestText.value);
         if (userDocument != null) {
             generateDocumentState.document = userDocument;
         }
@@ -192,8 +192,9 @@ const generateDocument = async () => {
 
         generateDocumentState.isLoading = false;
     }
-    catch (error) {
-        console.error("CreateDocument: Exception!", JSON.stringify(error));
+    catch (ex) {
+        console.error("CreateDocument: Exception!", JSON.stringify(ex));
+
         generateDocumentState.isError = true;
     }
 };
