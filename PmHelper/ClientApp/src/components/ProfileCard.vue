@@ -24,11 +24,17 @@
                 >
                     {{ $t('common.logout_button_title') }}
                 </va-button>
+                
+                <va-button>
+                    Edit profile
+                </va-button>
+            </div>
 
-                <va-button
-                    v-if="props.userInfo.isAdmin"
-                    href="/dashboard"
-                >
+            <div
+                class="flex justify-center mt-2 items-center gap-3 p-2"
+                v-if="props.userInfo.isAdmin"
+            >
+                <va-button href="/dashboard">
                     Admin panel
                 </va-button>
             </div>

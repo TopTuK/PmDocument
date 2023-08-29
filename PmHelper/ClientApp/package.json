@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "apexcharts": "^3.42.0",
     "axios": "^1.4.0",
     "js-cookie": "^3.0.5",
     "pinia": "^2.1.6",

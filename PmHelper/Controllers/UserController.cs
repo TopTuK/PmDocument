@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PmHelper.Domain.Models.Requests;
 using PmHelper.Domain.Services.Users;
 using System.Security.Claims;
 
@@ -41,6 +42,42 @@ namespace PmHelper.Controllers
 
             _logger.LogInformation($"UserController::GetUserInfo: found user {user.Email} {user.FirstName} {user.LastName}");
             return new JsonResult(user);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        [HttpPost]
+        public async Task<IActionResult> EditUserInfo(UserInfo userInfo)
+        {
+            // Get User by Id
+            var userId = (int)HttpContext.Items["userId"]!;
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            if ((userInfo.Id != userId) && (!user.IsAdmin))
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var usr = await _userService.EditUserInfoAsync(userInfo.Id, userInfo.FirstName, userInfo.LastName);
+                return new JsonResult(usr);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("", ex.Message);
+
+            }
+
+            throw new NotImplementedException();
         }
 
         [Authorize(Policy = "IsAdmin")]

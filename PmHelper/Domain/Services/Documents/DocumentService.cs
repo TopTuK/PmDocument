@@ -3,9 +3,11 @@ using Microsoft.Extensions.Logging;
 using NetChatGptCLient.Services.ChatGptClient;
 using PmHelper.Domain.Models;
 using PmHelper.Domain.Models.Documents;
+using PmHelper.Domain.Models.Users;
 using PmHelper.Domain.Repository;
 using PmHelper.Domain.Repository.Entities;
 using PmHelper.Domain.Services.ChatGpt;
+using PmHelper.Domain.Services.Users;
 using System.Text;
 
 namespace PmHelper.Domain.Services.Documents
@@ -16,16 +18,20 @@ namespace PmHelper.Domain.Services.Documents
 
         private readonly AppDbContext _dbContext;
         private readonly IDocumentGptService _docGptService;
+        private readonly IUserService _userService;
 
-        public DocumentService(AppDbContext dbContext, IDocumentGptService docGptService, ILogger<IDocumentService> logger)
+        public DocumentService(AppDbContext dbContext, IDocumentGptService docGptService, IUserService userService,
+            ILogger<IDocumentService> logger)
         {
             _dbContext = dbContext;
             _docGptService = docGptService;
 
+            _userService = userService;
+
             _logger = logger;
         }
 
-        public async Task<IEnumerable<IUserDocument>> GetUserDocumentsAsync(int userId)
+        public async Task<IEnumerable<IDocument>> GetDocumentsByUserIdAsync(int userId)
         {
             _logger.LogInformation(
                 "DocumentService::GetUserDocumentsAsync: start get documents for used {}",
@@ -34,7 +40,7 @@ namespace PmHelper.Domain.Services.Documents
 
             var userDocuments = await _dbContext.UserDocuments
                 .Where(dbDoc => dbDoc.UserId == userId)
-                .Select(dbDoc => UserDocument.CreateUserDocument(dbDoc))
+                .Select(dbDoc => Document.CreateUserDocument(dbDoc))
                 .ToListAsync();
 
             _logger.LogInformation(
@@ -157,7 +163,7 @@ namespace PmHelper.Domain.Services.Documents
             }
         }
 
-        public async Task<IUserDocument?> GenerateUserDocumentAsync(
+        public async Task<IDocument?> GenerateUserDocumentAsync(
             int userId, int documentTypeId, string documentTitle, string requestText)
         {
             _logger.LogInformation(
@@ -204,7 +210,122 @@ namespace PmHelper.Domain.Services.Documents
             var dbUserDocument = await SaveGeneratedUserDocument(
                 userId, documentTypeId,
                 documentTitle, requestText, documentText);
-            return UserDocument.CreateUserDocument(dbUserDocument);
+            return Document.CreateUserDocument(dbUserDocument);
+        }
+
+        private class UserDocuments : IUserDocuments
+        {
+            public IUser User { get; init; }
+            public IReadOnlyList<IDocument> Documents { get; init; }
+
+            public UserDocuments(IUser user, IEnumerable<IDocument> documents)
+            {
+                User = user;
+                Documents = new List<IDocument>(documents);
+            }
+        }
+
+        public async Task<IEnumerable<IUserDocuments>> GetAllUserDocumentsAsync()
+        {
+            _logger.LogInformation("DocumentService::GetAllUserDocumentsAsync: start getting user documents");
+
+            var dbUserDocuments = _dbContext.UserDocuments
+                .Select(dbDoc => dbDoc)
+                .GroupBy(dbDoc => dbDoc.UserId);
+            _logger.LogInformation("DocumentService::GetAllUserDocumentsAsync: got {} users with documents",
+                dbUserDocuments.Count());
+
+            var userDocuments = new List<IUserDocuments>(dbUserDocuments.Count());
+            foreach (var dbUserDoc in dbUserDocuments)
+            {
+                var user = await _userService.GetUserByIdAsync(dbUserDoc.Key);
+
+                if (user == null)
+                {
+                    _logger.LogError("DocumentService::GetAllUserDocumentsAsync: EXCEPTION: can't find user with id={}",
+                        dbUserDoc.Key);
+                    throw new DocumentException($"can't find user with id={dbUserDoc.Key}");
+                }
+
+                var documents = dbUserDoc
+                    .Select(dbDoc => Document.CreateUserDocument(dbDoc))
+                    .ToList();
+
+                userDocuments.Add(new UserDocuments(user, documents));
+            }
+
+            _logger.LogInformation("DocumentService::GetAllUserDocumentsAsync: return information about {} users",
+                userDocuments.Count);
+            return userDocuments;
+        }
+
+        public async Task<IDocument?> RemoveUserDocumentAsync(int documentId)
+        {
+            _logger.LogInformation("DocumentService::RemoveUserDocumentAsync: removing user document with Id={}",
+                documentId);
+
+            try
+            {
+                var dbDocument = await _dbContext.UserDocuments
+                    .FirstOrDefaultAsync(doc =>  doc.Id == documentId);
+
+                if (dbDocument != null)
+                {
+                    _logger.LogInformation("DocumentService::RemoveUserDocumentAsync: found document {} {}",
+                        dbDocument.Id, dbDocument.Title);
+
+                    var document = Document.CreateUserDocument(dbDocument);
+
+                    _dbContext.UserDocuments.Remove(dbDocument);
+                    await _dbContext.SaveChangesAsync();
+
+                    _logger.LogInformation("DocumentService::RemoveUserDocumentAsync: removed document {} {}",
+                        document.Id, document.Title);
+                    return document;
+                }
+
+                _logger.LogWarning("DocumentService::RemoveUserDocumentAsync: document with Id={} is not found",
+                    documentId);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DocumentService::RemoveUserDocumentAsync: EXCEPTION! Msg",
+                    ex.Message);
+                return null;
+            }
+        }
+
+        private class UserDocument : Document, IUserDocument
+        {
+            public IUser User { get; init;}
+
+            public UserDocument(DbUserDocument dbUserDocument)
+                : base(dbUserDocument)
+            {
+                User = new User(dbUserDocument.UserProfile!);
+            }
+        }
+
+        public async Task<IUserDocument?> GetUserDocumentAsync(int documentId)
+        {
+            _logger.LogInformation("DocumentService::GetDocumentAsync: get docuemnt with Id={}", documentId);
+
+            try
+            {
+                var dbDoc = await _dbContext.UserDocuments
+                    .FirstOrDefaultAsync(dbDoc => dbDoc.Id == documentId);
+
+                _logger.LogInformation("DocumentService::GetDocumentAsync: found document {} {}",
+                    dbDoc?.Id, dbDoc?.Title);
+
+                return (dbDoc != null) ? new UserDocument(dbDoc) : null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DocumentService::GetDocumentAsync: EXCEPTION. Msg: {}", ex.Message);
+                return null;
+            }
         }
     }
 }

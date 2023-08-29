@@ -2,8 +2,9 @@
 
 namespace PmHelper.Domain.Models.Documents
 {
-    public interface IUserDocument : IDocument
+    public interface IUserDocuments
     {
         IUser User { get; }
+        IReadOnlyList<IDocument> Documents { get; }
     }
 }

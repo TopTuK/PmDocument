@@ -2,7 +2,7 @@
 
 namespace PmHelper.Domain.Models.Documents
 {
-    internal class UserDocument : IUserDocument
+    internal class Document : IDocument
     {
         public int Id { get; init; }
         public IDocumentType DocumentType { get; init; }
@@ -12,7 +12,7 @@ namespace PmHelper.Domain.Models.Documents
         public DateTime Created { get; init; }
         public DateTime LastModified { get; init; }
 
-        private UserDocument(DbUserDocument dbUserDocument)
+        internal protected Document(DbUserDocument dbUserDocument)
         {
             Id = dbUserDocument.Id;
 
@@ -28,9 +28,9 @@ namespace PmHelper.Domain.Models.Documents
                 : DocumentTypeImpl.UnknownDocumentType();
         }
 
-        public static IUserDocument CreateUserDocument(DbUserDocument dbUserDocument)
+        public static IDocument CreateUserDocument(DbUserDocument dbUserDocument)
         {
-            return new UserDocument(dbUserDocument);
+            return new Document(dbUserDocument);
         }
     }
 }

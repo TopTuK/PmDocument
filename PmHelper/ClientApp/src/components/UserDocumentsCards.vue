@@ -40,6 +40,7 @@ import UserDocumentCard from './UserDocumentCard.vue';
 
 const documentsStore = useDocumentStore();
 const { userDocumentsState } = storeToRefs(documentsStore);
+// const userDocumentsState = documentsStore.userDocumentsState;
 
 onBeforeMount(async () => {
     try {

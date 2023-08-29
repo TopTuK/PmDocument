@@ -118,7 +118,7 @@ export const useDocumentStore = defineStore('documentsStore', () => {
     }
 
     return {
-        userDocumentsState, userDocuments, isLoading, error, getUserDocuments,
+        userDocumentsState, getUserDocuments,
         generateUserDocument,
     };
 });

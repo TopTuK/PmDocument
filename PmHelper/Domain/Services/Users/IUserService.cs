@@ -44,5 +44,7 @@ namespace PmHelper.Domain.Services.Users
         /// </summary>
         /// <returns></returns>
         Task<IEnumerable<IUser>> GetAllUsersAsync();
+
+        Task<IUser> EditUserInfoAsync(int userId, string firstName, string lastName);
     }
 }
