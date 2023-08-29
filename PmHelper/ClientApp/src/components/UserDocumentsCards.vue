@@ -29,6 +29,7 @@
         v-else
         v-for="userDocument in userDocumentsState.documents"
         :doc="userDocument"
+        @onRemove="onRemoveDocument"
     />
 </template>
 
@@ -40,7 +41,10 @@ import UserDocumentCard from './UserDocumentCard.vue';
 
 const documentsStore = useDocumentStore();
 const { userDocumentsState } = storeToRefs(documentsStore);
-// const userDocumentsState = documentsStore.userDocumentsState;
+
+const onRemoveDocument = async (docId) => {
+    console.log(`UserDocumentCards::onRemove: remove ${docId} document`);
+};
 
 onBeforeMount(async () => {
     try {

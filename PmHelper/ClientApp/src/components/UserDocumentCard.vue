@@ -5,20 +5,36 @@
         </va-card-title>
         
         <va-card-content>
-            {{ requestText }}
+            <div v-if="!isLoading">
+                {{ requestText }}
+            </div>
+
+            <div v-else>
+                Loading...
+            </div>
         </va-card-content>
 
-        <va-card-actions align="center" class="gap-3">
-            <va-button>View</va-button>
-            <va-button>Share</va-button>
-            <va-button>Remove</va-button>
+        <va-card-actions
+            v-show="!isLoading"
+            align="center" class="gap-3"
+        >
+            <va-button>
+                View
+            </va-button>
+
+            <va-button
+                @click="removeDocument"
+            >
+                Remove
+            </va-button>
         </va-card-actions>
     </va-card>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { filter } from '../utils';
+import { useDocumentStore } from '@/stores/documentsStore';
 
 const props = defineProps({
     doc: {
@@ -27,7 +43,18 @@ const props = defineProps({
     },
 });
 
+const documentsStore = useDocumentStore();
+const isLoading = ref(false);
+
 const requestText = computed(() => {
     return filter(props.doc.requestText, 300);
 });
+
+const removeDocument = async () => {
+    isLoading.value = true;
+
+    await documentsStore.removeUserDocument(props.doc.id);
+
+    isLoading.value = false;
+}
 </script>

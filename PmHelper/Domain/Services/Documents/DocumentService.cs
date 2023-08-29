@@ -309,7 +309,7 @@ namespace PmHelper.Domain.Services.Documents
 
         public async Task<IUserDocument?> GetUserDocumentAsync(int documentId)
         {
-            _logger.LogInformation("DocumentService::GetDocumentAsync: get docuemnt with Id={}", documentId);
+            _logger.LogInformation("DocumentService::GetDocumentAsync: get document with Id={}", documentId);
 
             try
             {

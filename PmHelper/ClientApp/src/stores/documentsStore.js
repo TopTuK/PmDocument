@@ -61,7 +61,7 @@ export const useDocumentStore = defineStore('documentsStore', () => {
                 'documentId' : documentId
             }
 
-            let response = await axios.get(REMOVE_USER_DOCUMENT_ACTION, queryParams);
+            let response = await axios.get(REMOVE_USER_DOCUMENT_ACTION, { params: queryParams });
             
             if (DEBUG) {
                 console.log(`DocumentStore::removeUserDocument: got response with status=${response.status}`);
@@ -72,12 +72,16 @@ export const useDocumentStore = defineStore('documentsStore', () => {
                 return false;
             }
             else {
-                // TODO: filter user documents
+                // TODO: Correct filter user documents
+                console.log(`DocumentStore::removeUserDocument: successfully removed document with id=${documentId}`);
+                userDocumentsState.documents = userDocumentsState.documents.filter(doc => doc.id != documentId)
+
                 return true;
             }
         }
         catch (ex) {
             console.error("DocumentStore::removeUserDocument: EXCEPTION: ", ex);
+            return false;
         }
     }
 
@@ -120,5 +124,6 @@ export const useDocumentStore = defineStore('documentsStore', () => {
     return {
         userDocumentsState, getUserDocuments,
         generateUserDocument,
+        removeUserDocument,
     };
 });
