@@ -10,7 +10,7 @@
             </div>
 
             <div v-else>
-                Loading...
+                <va-progress-circle indeterminate />
             </div>
         </va-card-content>
 
@@ -19,13 +19,11 @@
             align="center" class="gap-3"
         >
             <va-button>
-                View
+                {{ $t('documents.show_button_title') }}
             </va-button>
 
-            <va-button
-                @click="removeDocument"
-            >
-                Remove
+            <va-button @click="removeDocument">
+                {{ $t('documents.remove_button_title') }}
             </va-button>
         </va-card-actions>
     </va-card>

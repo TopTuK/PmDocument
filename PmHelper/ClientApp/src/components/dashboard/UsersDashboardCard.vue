@@ -1,5 +1,5 @@
 <template>
-    <va-card square outlined>
+    <va-card>
         <va-card-title>
             Users
         </va-card-title>
@@ -39,7 +39,7 @@ const getAllUsers = async () => {
 
         isUsersLoading.value = false;
     } catch (error) {
-        console.error(error);
+        console.error('UserDashboardCard::getAllUsers: EXCEPTION: ', error);
 
         users.value = null;
         isUsersLoading.value = false;

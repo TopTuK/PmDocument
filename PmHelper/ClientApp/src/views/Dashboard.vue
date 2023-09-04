@@ -1,6 +1,6 @@
 <template>
-    <div class="flex flex-col justify-center items-center mx-5 my-5">
-        <div class="grid gap-4 lg:grid-cols-3 grid-cols-2">
+    <div class="flex flex-col">
+        <div class="p-4 grid shrink gap-4 lg:grid-cols-3 grid-cols-2">
             <UsersDashboardCard />
             <DocumentsDashboardCard />
         </div>

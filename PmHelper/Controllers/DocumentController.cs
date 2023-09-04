@@ -108,7 +108,6 @@ namespace PmHelper.Controllers
                         {
                             Status = "OK",
                             document.Id,
-                            document.Title,
                         });
                     }
                     else
@@ -141,26 +140,27 @@ namespace PmHelper.Controllers
             _logger.LogInformation("DocumentController::GetDocumentsStatistic: got {} users with document",
                 userDocumentsCount);
 
-            var users = userDocuments
-                .Select(ud => ud.User)
+            var userDocumentsSTatistic = userDocuments
+                .Select(ud => new
+                {
+                    ud.User,
+                    ud.Documents.Count,
+                })
                 .ToList();
-            _logger.LogInformation("DocumentController::GetDocumentsStatistic: users count={}", users.Count);
 
             var totalDocumentsCount = 0;
-            var userDocumentsStatistic = new Dictionary<int, int>(userDocumentsCount);
-            foreach (var userDocument in userDocuments)
+            foreach (var userDocument in userDocumentsSTatistic)
             {
-                totalDocumentsCount += userDocument.Documents.Count;
-                userDocumentsStatistic.Add(userDocument.User.Id, userDocument.Documents.Count);
+                totalDocumentsCount += userDocument.Count;
             }
-            
+
             _logger.LogInformation("DocumentController::GetDocumentsStatistic: Total Documents Count = {}",
                 totalDocumentsCount);
+
             return new JsonResult(new
             {
                 TotalDocuments = totalDocumentsCount,
-                UserDocumentsStatistic = userDocumentsStatistic,
-                Users = users,
+                UserDocumentsStatistic = userDocumentsSTatistic,
             });
         }
     }

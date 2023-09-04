@@ -7,6 +7,8 @@ import axios from 'axios';
 import VueFormWizard from 'vue3-form-wizard';
 import 'vue3-form-wizard/dist/style.css';
 
+import VueApexCharts from "vue3-apexcharts";
+
 import router from "@/router/index.js";
 
 import messages from '@/models/messages.js';
@@ -47,6 +49,9 @@ app.use(createVuestic());
 
 // use VueFormWizard
 app.use(VueFormWizard);
+
+// use VueApexCharts
+app.use(VueApexCharts);
 
 // Mount app
 app.mount('#app');

@@ -74,7 +74,7 @@ export const useDocumentStore = defineStore('documentsStore', () => {
             else {
                 // TODO: Correct filter user documents
                 console.log(`DocumentStore::removeUserDocument: successfully removed document with id=${documentId}`);
-                userDocumentsState.documents = userDocumentsState.documents.filter(doc => doc.id != documentId)
+                userDocumentsState.documents = userDocumentsState.documents.filter(doc => doc.id != documentId);
 
                 return true;
             }

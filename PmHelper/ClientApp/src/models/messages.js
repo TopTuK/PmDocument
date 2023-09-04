@@ -17,7 +17,7 @@ const messages = {
             title: "Generate documentation with help of AI",
             description: "Stop wasting time writing documentation from scratch.",
             slogan: "Let the AI help you!",
-            app_description: "will help you to leverage the power of ChatGPT to save time and money"
+            app_description: "will help you to leverage the power of ChatGPT to save time and money",
         },
         documents: {
             new_document_title: "Can't find the desired document?",
@@ -25,6 +25,8 @@ const messages = {
             new_document_button_title: "Tell us more",
             create_document_card_title: "New document",
             create_document_button_title: "Create document",
+            show_button_title: "View",
+            remove_button_title: "Remove",
         },
         documents_types: {
             document_type_title: "Document type",
