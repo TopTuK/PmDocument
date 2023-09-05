@@ -11,8 +11,6 @@
 
             <div v-else>
                 <div v-if="docStatistic != null">
-                    TOTAL DOCUMENTS: {{ docStatistic.totalDocuments }}
-
                     <apexchart 
                         width="380"
                         type="pie"
@@ -26,36 +24,21 @@
                 </div>
             </div>
         </va-card-content>
+
+        <va-card-actions v-if="(!isStatisticLoading) && (docStatistic != null)">
+            <va-button>Action 1</va-button>
+            <va-button>Action 2</va-button>
+        </va-card-actions>
     </va-card>
 </template>
 
 <script setup>
-import { ref, onBeforeMount, computed } from 'vue';
+import { ref, onBeforeMount, computed, watch } from 'vue';
 import useDocumentService from '@/services/documentService.js';
 
 const documentService = useDocumentService();
 const isStatisticLoading = ref(false);
 const docStatistic = ref(null);
-
-const chartSeries = computed(() => {
-    if (docStatistic.value == null) {
-        return [];
-    }
-
-    return docStatistic.value
-        .userDocumentsStatistic
-        .map((ud) => ud.count);
-});
-
-const chartLabels = computed(() => {
-    if (docStatistic.value == null) {
-        return [];
-    }
-
-    return docStatistic.value
-        .userDocumentsStatistic
-        .map((ud) => ud.user.email);
-});
 
 const chartOptions = {
     chart: {
@@ -75,6 +58,25 @@ const chartOptions = {
         },
     }],
 };
+
+const chartSeries = computed(() => {
+    if (docStatistic.value == null) {
+        return [];
+    }
+
+    return docStatistic.value
+        .userDocumentsStatistic
+        .map((ud) => ud.count);
+});
+
+watch(() => docStatistic.value, (docStat, _) => {
+    if (docStat != null) {
+        let labels = docStat.userDocumentsStatistic
+            .map((ud) => ud.user.email);
+
+        chartOptions.labels = labels;
+    }
+});
 
 const getDocumentStatistic = async () => {
     try {
