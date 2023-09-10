@@ -327,5 +327,53 @@ namespace PmHelper.Domain.Services.Documents
                 return null;
             }
         }
+
+        public async Task<IEnumerable<IDocumentType>> GetDocumentsTypesAsync()
+        {
+            _logger.LogInformation("DocumentService::GetDocumentsTypesAsync: start get documents types");
+
+            try
+            {
+                var documentTypes = await _dbContext.DocumentTypes
+                    .Select(dbDocType => new DocumentTypeImpl(dbDocType))
+                    .ToListAsync();
+
+                _logger.LogInformation("DocumentService::GetDocumentsTypesAsync: return {} document types",
+                    documentTypes.Count);
+                return documentTypes;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DocumentService::GetDocumentsTypesAsync: EXCEPTION raised. Msg: {}", ex.Message);
+                return Enumerable.Empty<IDocumentType>();
+            }
+        }
+
+        public async Task<IDocumentPromtType?> GetDocumentTypeAsync(int documentId)
+        {
+            _logger.LogInformation("DocumentService::GetDocumentTypeAsync: get {} document type with promt", documentId);
+
+            try
+            {
+                var dbDocumentType = await _dbContext.DocumentTypes
+                    .FirstOrDefaultAsync(dbDoc => dbDoc.Id == documentId);
+
+                if (dbDocumentType == null)
+                {
+                    _logger.LogError("DocumentService::GetDocumentTypeAsync: can\'t get document with id={}", documentId);
+                    return null;
+                }
+
+                var documentType = new DocumentPromtType(dbDocumentType);
+                _logger.LogInformation("DocumentService::GetDocumentTypeAsync: return {} {}",
+                    documentType.Id, documentType.Name);
+                return documentType;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DocumentService::GetDocumentTypeAsync: EXCEPTION raised. Msg: {}", ex.Message);
+                return null;
+            }
+        }
     }
 }

@@ -1,22 +1,24 @@
-import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
 
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/stores/userStore';
 
-import Home from '@/views/Home.vue'
-import Login from '@/views/Login.vue'
-import Documents from '@/views/Documents.vue'
-import Profile from '@/views/Profile.vue'
+import Home from '@/views/Home.vue';
+import Login from '@/views/Login.vue';
+import Documents from '@/views/Documents.vue';
+import Profile from '@/views/Profile.vue';
 
 // https://router.vuejs.org/guide/advanced/lazy-loading.html
-const ProjectCharter = () => import('@/views/documents/ProjectCharter.vue')
-const AppRequirements = () => import('@/views/documents/AppRequirements.vue')
-const FeatureRequirements = () => import('@/views/documents/FeatureRequirements.vue')
-const UserStory = () => import('@/views/documents/UserStory.vue')
+const ProjectCharter = () => import('@/views/documents/ProjectCharter.vue');
+const AppRequirements = () => import('@/views/documents/AppRequirements.vue');
+const FeatureRequirements = () => import('@/views/documents/FeatureRequirements.vue');
+const UserStory = () => import('@/views/documents/UserStory.vue');
 
-const CreateDocument = () => import('@/views/CreateDocument.vue')
-const UserDocument = () => import('@/views/UserDocument.vue')
+const CreateDocument = () => import('@/views/CreateDocument.vue');
+const UserDocument = () => import('@/views/UserDocument.vue');
 
-const Dashboard = () => import('@/views/Dashboard.vue')
+const Dashboard = () => import('@/views/Dashboard.vue');
+const DashboardDocuments = () => import('@/views/dashboard/DocumentsDashboard.vue');
+const DashboardEditDocument = () => import('@/views/dashboard/EditDocumentDashboard.vue');
 
 const routes = [
     {
@@ -113,7 +115,28 @@ const routes = [
             requiresAdmin: true,
             requiresAuth: true,
         },
-    }
+    },
+    {
+        path: "/dashboard/documents",
+        name: "DashboardDocuments",
+        component: DashboardDocuments,
+        meta: {
+            title: "dashboard_documents_title",
+            requiresAdmin: true,
+            requiresAuth: true,
+        },
+    },
+    {
+        path: "/dashboard/document/edit/:id",
+        name: "EditDocumentDashboard",
+        component: DashboardEditDocument,
+        props: true,
+        meta: {
+            title: "dashboard_edit_documents_title",
+            requiresAdmin: true,
+            requiresAuth: true,
+        },
+    },
 ];
 
 const router = createRouter({

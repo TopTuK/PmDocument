@@ -43,5 +43,18 @@ namespace PmHelper.Domain.Services.Documents
         /// <param name="documentId"></param>
         /// <returns></returns>
         Task<IDocument?> RemoveUserDocumentAsync(int documentId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<IDocumentType>> GetDocumentsTypesAsync();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="documentId"></param>
+        /// <returns></returns>
+        Task<IDocumentPromtType?> GetDocumentTypeAsync(int documentId);
     }
 }

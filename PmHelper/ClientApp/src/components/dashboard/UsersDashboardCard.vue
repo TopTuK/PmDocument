@@ -19,6 +19,15 @@
                 </div>
             </div>
         </va-card-content>
+
+        <va-card-actions v-if="(!isUsersLoading) && (users != null)">
+            <va-button @click="getAllUsers">
+                Refresh
+            </va-button>
+            <va-button>
+                Action 2
+            </va-button>
+        </va-card-actions>
     </va-card>
 </template>
 

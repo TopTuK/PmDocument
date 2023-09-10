@@ -1,7 +1,9 @@
 <template>
     <va-card square outlined>
         <va-card-title>
-            Documents
+            <div class="flex flex-row">
+                Documents
+            </div>
         </va-card-title>
 
         <va-card-content>
@@ -25,9 +27,17 @@
             </div>
         </va-card-content>
 
-        <va-card-actions v-if="(!isStatisticLoading) && (docStatistic != null)">
-            <va-button>Action 1</va-button>
-            <va-button>Action 2</va-button>
+        <va-card-actions v-if="(!isStatisticLoading)">
+            <div v-if="(docStatistic != null)">
+                <va-button @click="getDocumentStatistic">
+                    Refresh
+                </va-button>
+                <va-button
+                    :to="{ name: 'DashboardDocuments' }"
+                >
+                    Manage
+                </va-button>
+            </div>
         </va-card-actions>
     </va-card>
 </template>

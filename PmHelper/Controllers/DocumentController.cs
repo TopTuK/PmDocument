@@ -163,5 +163,37 @@ namespace PmHelper.Controllers
                 UserDocumentsStatistic = userDocumentsSTatistic,
             });
         }
+
+        [Authorize(Policy = "IsAdmin")]
+        [HttpGet]
+        public async Task<IActionResult> GetDocumentsTypes()
+        {
+            _logger.LogInformation("DocumentController::GetDocumentsTypes: start getting document types");
+
+            var documentTypes = await _documentService.GetDocumentsTypesAsync();
+
+            _logger.LogInformation("DocumentController::GetDocumentsTypes: return {} document types",
+                documentTypes.Count());
+            return new JsonResult(documentTypes);
+        }
+
+        [Authorize(Policy = "IsAdmin")]
+        [HttpGet]
+        public async Task<IActionResult> GetDocumentPromtType(int id)
+        {
+            _logger.LogInformation("DocumentController::GetDocumentType: get document type with promt. Id={}",
+                id);
+
+            var documentType = await _documentService.GetDocumentTypeAsync(id);
+            if (documentType == null)
+            {
+                _logger.LogError("DocumentController::GetDocumentType: document type with id={} is not found", id);
+                return BadRequest($"Document type with id={id} is not found");
+            }
+
+            _logger.LogInformation("DocumentController::GetDocumentType: return document type: {} {}",
+                documentType.Id, documentType.Name);
+            return new JsonResult(documentType);
+        }
     }
 }
